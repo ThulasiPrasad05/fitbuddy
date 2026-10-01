@@ -1,0 +1,2385 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>FitBuddy - Workouts</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f6f8;
+      color: #222;
+    }
+
+    .header {
+      background: white;
+      padding: 18px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .back-btn,
+    .section-back button {
+      border: none;
+      background: #eeeeee;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .back-btn:hover,
+    .section-back button:hover {
+      background: #dddddd;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 35px auto;
+      padding: 20px;
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .title h1 {
+      margin-bottom: 8px;
+    }
+
+    .title p,
+    .card p,
+    .subtitle {
+      color: #666;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px 20px;
+      border-radius: 18px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 7px 20px rgba(0,0,0,0.12);
+    }
+
+    .icon {
+      font-size: 45px;
+      margin-bottom: 15px;
+    }
+
+    .card h2 {
+      margin: 8px 0;
+    }
+
+    .section-back {
+      margin-bottom: 20px;
+    }
+
+    .workout-result {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .workout-result h2 {
+      margin-top: 0;
+      font-size: 25px;
+    }
+
+    .day-card {
+      background: #f8f8f8;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 22px;
+      border: 1px solid #eeeeee;
+    }
+
+    .day-title {
+      font-size: 21px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .muscle-group {
+      font-size: 14px;
+      font-weight: bold;
+      color: #666;
+      margin-top: 15px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .exercise {
+      background: white;
+      padding: 13px 15px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #eeeeee;
+    }
+
+    .exercise-info {
+      flex: 1;
+    }
+
+    .exercise-name {
+      font-weight: bold;
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+
+    .exercise-details {
+      color: #777;
+      font-size: 12px;
+    }
+
+    .video-btn {
+      border: none;
+      background: #111;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .video-btn:hover {
+      background: #333;
+    }
+
+    @media (max-width: 650px) {
+
+      .header {
+        padding: 15px;
+      }
+
+      .container {
+        padding: 12px;
+        margin: 20px auto;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .workout-result {
+        padding: 16px;
+      }
+
+      .exercise {
+        align-items: flex-start;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+  <div class="logo">
+    💪 FitBuddy
+  </div>
+
+  <button
+    class="back-btn"
+    onclick="goHome()"
+  >
+    ← Home
+  </button>
+
+</div>
+
+
+<div class="container">
+
+  <div class="title">
+
+    <h1>🏋️ Workouts</h1>
+
+    <p>
+      Choose a workout based on your experience
+    </p>
+
+  </div>
+
+
+  <!-- LEVEL -->
+
+  <div
+    id="levelSection"
+    class="section active"
+  >
+
+    <div class="cards">
+
+      <div
+        class="card"
+        onclick="selectLevel('Beginner')"
+      >
+
+        <div class="icon">🟢</div>
+
+        <h2>Beginner</h2>
+
+        <p>
+          Start your fitness journey
+        </p>
+
+      </div>
+
+
+      <div
+        class="card"
+        onclick="selectLevel('Intermediate')"
+      >
+
+        <div class="icon">🔵</div>
+
+        <h2>Intermediate</h2>
+
+        <p>
+          Take your training to the next level
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- GYM / HOME -->
+
+  <div
+    id="typeSection"
+    class="section"
+  >
+
+    <div class="section-back">
+
+      <button onclick="showSection('levelSection')">
+        ← Back
+      </button>
+
+    </div>
+
+    <div class="cards">
+
+      <div
+        class="card"
+        onclick="selectType('Gym')"
+      >
+
+        <div class="icon">🏋️</div>
+
+        <h2>Gym Workout</h2>
+
+        <p>
+          Workout using gym equipment
+        </p>
+
+      </div>
+
+
+      <div
+        class="card"
+        onclick="selectType('Home')"
+      >
+
+        <div class="icon">🏠</div>
+
+        <h2>Home Workout</h2>
+
+        <p>
+          Workout from home
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- DAYS -->
+
+  <div
+    id="daysSection"
+    class="section"
+  >
+
+    <div class="section-back">
+
+      <button onclick="showSection('typeSection')">
+        ← Back
+      </button>
+
+    </div>
+
+    <div class="cards">
+
+      <div
+        class="card"
+        onclick="selectDays(3)"
+      >
+
+        <div class="icon">3️⃣</div>
+
+        <h2>3 Days</h2>
+
+        <p>Three-day workout plan</p>
+
+      </div>
+
+
+      <div
+        class="card"
+        onclick="selectDays(4)"
+      >
+
+        <div class="icon">4️⃣</div>
+
+        <h2>4 Days</h2>
+
+        <p>Four-day workout plan</p>
+
+      </div>
+
+
+      <div
+        class="card"
+        onclick="selectDays(5)"
+      >
+
+        <div class="icon">5️⃣</div>
+
+        <h2>5 Days</h2>
+
+        <p>Five-day workout plan</p>
+
+      </div>
+
+
+      <div
+        class="card"
+        onclick="selectDays(6)"
+      >
+
+        <div class="icon">6️⃣</div>
+
+        <h2>6 Days</h2>
+
+        <p>Six-day workout plan</p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- BOYS / GIRLS -->
+
+  <div
+    id="genderSection"
+    class="section"
+  >
+
+    <div class="section-back">
+
+      <button onclick="showSection('daysSection')">
+        ← Back
+      </button>
+
+    </div>
+
+    <div class="cards">
+
+      <div
+        class="card"
+        onclick="showSelectedWorkout('Boys')"
+      >
+
+        <div class="icon">👦</div>
+
+        <h2>Boys</h2>
+
+        <p>View workout split</p>
+
+      </div>
+
+
+      <div
+        class="card"
+        onclick="showSelectedWorkout('Girls')"
+      >
+
+        <div class="icon">👧</div>
+
+        <h2>Girls</h2>
+
+        <p>View workout split</p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- GYM RESULT -->
+
+  <div
+    id="workoutSection"
+    class="section"
+  >
+
+    <div class="section-back">
+
+      <button onclick="showSection('genderSection')">
+        ← Back
+      </button>
+
+    </div>
+
+    <div class="workout-result">
+
+      <h2 id="workoutTitle"></h2>
+
+      <div class="subtitle">
+        Complete each exercise with controlled form.
+        Tap "🎥 Form Video" to see a YouTube tutorial.
+      </div>
+
+      <div id="workoutPlan"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- HOME RESULT -->
+
+  <div
+    id="homeWorkoutSection"
+    class="section"
+  >
+
+    <div class="section-back">
+
+      <button onclick="showSection('genderSection')">
+        ← Back
+      </button>
+
+    </div>
+
+    <div class="workout-result">
+
+      <h2 id="homeTitle"></h2>
+
+      <div class="subtitle">
+        Home workout using bodyweight and simple household equipment.
+      </div>
+
+      <div id="homeWorkout"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let selectedLevel = "";
+let selectedType = "";
+let selectedDays = 0;
+
+
+/* =====================================================
+   SHOW SECTION
+===================================================== */
+
+function showSection(id) {
+
+  document
+    .querySelectorAll(".section")
+    .forEach(section => {
+      section.classList.remove("active");
+    });
+
+  document
+    .getElementById(id)
+    .classList.add("active");
+
+}
+
+
+/* =====================================================
+   SELECT LEVEL
+===================================================== */
+
+function selectLevel(level) {
+
+  selectedLevel = level;
+
+  showSection("typeSection");
+
+}
+
+
+/* =====================================================
+   SELECT TYPE
+===================================================== */
+
+function selectType(type) {
+
+  selectedType = type;
+
+  showSection("daysSection");
+
+}
+
+
+/* =====================================================
+   SELECT DAYS
+===================================================== */
+
+function selectDays(days) {
+
+  selectedDays = days;
+
+  showSection("genderSection");
+
+}
+
+
+/* =====================================================
+   SELECT FINAL WORKOUT
+===================================================== */
+
+function showSelectedWorkout(gender) {
+
+  if (selectedType === "Home") {
+
+    showHomeWorkout(gender);
+
+  } else {
+
+    showWorkout(gender);
+
+  }
+
+}
+
+
+/* =====================================================
+   YOUTUBE
+===================================================== */
+
+function openYouTube(exercise) {
+
+  const query = encodeURIComponent(
+    exercise + " tutorial proper form"
+  );
+
+  const url =
+    "https://www.youtube.com/results?search_query=" +
+    query;
+
+  window.open(url, "_blank");
+
+}
+
+
+/* =====================================================
+   CREATE EXERCISE
+===================================================== */
+
+function createExercise(name, sets, reps) {
+
+  const div = document.createElement("div");
+
+  div.className = "exercise";
+
+  const info = document.createElement("div");
+
+  info.className = "exercise-info";
+
+  info.innerHTML = `
+    <div class="exercise-name">
+      ${name}
+    </div>
+
+    <div class="exercise-details">
+      ${sets} sets × ${reps}
+    </div>
+  `;
+
+  const button = document.createElement("button");
+
+  button.className = "video-btn";
+
+  button.textContent = "🎥 Form Video";
+
+  button.onclick = function() {
+    openYouTube(name);
+  };
+
+  div.appendChild(info);
+
+  div.appendChild(button);
+
+  return div;
+
+}
+
+
+/* =====================================================
+   CREATE DAY
+===================================================== */
+
+function createDay(dayNumber, groups) {
+
+  const day = document.createElement("div");
+
+  day.className = "day-card";
+
+  const title = document.createElement("div");
+
+  title.className = "day-title";
+
+  title.textContent = "Day " + dayNumber;
+
+  day.appendChild(title);
+
+  groups.forEach(group => {
+
+    const groupTitle =
+      document.createElement("div");
+
+    groupTitle.className =
+      "muscle-group";
+
+    groupTitle.textContent =
+      group.name;
+
+    day.appendChild(groupTitle);
+
+    group.exercises.forEach(exercise => {
+
+      day.appendChild(
+        createExercise(
+          exercise[0],
+          exercise[1],
+          exercise[2]
+        )
+      );
+
+    });
+
+  });
+
+  return day;
+
+}
+
+
+/* =====================================================
+   GYM WORKOUT
+===================================================== */
+
+function showWorkout(gender) {
+
+  showSection("workoutSection");
+
+  document.getElementById(
+    "workoutTitle"
+  ).textContent =
+    selectedLevel +
+    " • " +
+    selectedDays +
+    " Day • " +
+    gender +
+    " Workout";
+
+  const container =
+    document.getElementById("workoutPlan");
+
+  container.innerHTML = "";
+
+  let plan = [];
+
+
+  /* ===================================================
+     BEGINNER 3 DAYS
+  =================================================== */
+
+  if (
+    selectedLevel === "Beginner" &&
+    selectedDays === 3
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Full Body",
+          exercises: [
+            ["Bodyweight Squat", 3, "10-12 reps"],
+            ["Push-Up", 3, "8-12 reps"],
+            ["Lat Pulldown", 3, "10-12 reps"],
+            ["Dumbbell Shoulder Press", 2, "10-12 reps"],
+            ["Dumbbell Biceps Curl", 2, "10-12 reps"],
+            ["Triceps Pushdown", 2, "10-12 reps"],
+            ["Plank", 3, "20-30 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Full Body",
+          exercises: [
+            ["Leg Press", 3, "10-12 reps"],
+            ["Chest Press Machine", 3, "10-12 reps"],
+            ["Seated Cable Row", 3, "10-12 reps"],
+            ["Lateral Raise", 2, "12-15 reps"],
+            ["Hammer Curl", 2, "10-12 reps"],
+            ["Rope Triceps Pushdown", 2, "10-12 reps"],
+            ["Dead Bug", 3, "10 reps each side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Full Body",
+          exercises: [
+            ["Goblet Squat", 3, "10-12 reps"],
+            ["Incline Dumbbell Press", 3, "10-12 reps"],
+            ["Assisted Pull-Up", 3, "8-10 reps"],
+            ["Dumbbell Shoulder Press", 2, "10-12 reps"],
+            ["Cable Curl", 2, "10-12 reps"],
+            ["Triceps Rope Pushdown", 2, "10-12 reps"],
+            ["Plank", 3, "30 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     BEGINNER 4 DAYS
+  =================================================== */
+
+  else if (
+    selectedLevel === "Beginner" &&
+    selectedDays === 4
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Upper Body",
+          exercises: [
+            ["Chest Press Machine", 3, "10-12 reps"],
+            ["Lat Pulldown", 3, "10-12 reps"],
+            ["Seated Cable Row", 2, "10-12 reps"],
+            ["Dumbbell Shoulder Press", 2, "10-12 reps"],
+            ["Dumbbell Curl", 2, "10-12 reps"],
+            ["Triceps Pushdown", 2, "10-12 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Lower Body",
+          exercises: [
+            ["Leg Press", 3, "10-12 reps"],
+            ["Goblet Squat", 3, "10-12 reps"],
+            ["Leg Curl", 2, "12 reps"],
+            ["Leg Extension", 2, "12 reps"],
+            ["Standing Calf Raise", 3, "12-15 reps"],
+            ["Plank", 3, "30 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Upper Body",
+          exercises: [
+            ["Incline Chest Press", 3, "10-12 reps"],
+            ["Cable Row", 3, "10-12 reps"],
+            ["Lateral Raise", 3, "12-15 reps"],
+            ["Face Pull", 2, "12-15 reps"],
+            ["Hammer Curl", 2, "10-12 reps"],
+            ["Overhead Triceps Extension", 2, "10-12 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Lower Body + Core",
+          exercises: [
+            ["Bodyweight Squat", 3, "12 reps"],
+            ["Romanian Deadlift", 3, "10-12 reps"],
+            ["Walking Lunges", 2, "10 each leg"],
+            ["Leg Curl", 2, "12 reps"],
+            ["Calf Raise", 3, "15 reps"],
+            ["Crunch", 3, "15 reps"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     BEGINNER 5 DAYS
+  =================================================== */
+
+  else if (
+    selectedLevel === "Beginner" &&
+    selectedDays === 5
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Chest + Triceps",
+          exercises: [
+            ["Chest Press Machine", 3, "10-12 reps"],
+            ["Incline Dumbbell Press", 3, "10-12 reps"],
+            ["Cable Fly", 2, "12 reps"],
+            ["Triceps Pushdown", 3, "10-12 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Back + Biceps",
+          exercises: [
+            ["Lat Pulldown", 3, "10-12 reps"],
+            ["Seated Cable Row", 3, "10-12 reps"],
+            ["Dumbbell Row", 2, "10 reps"],
+            ["Dumbbell Curl", 3, "10-12 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Legs + Core",
+          exercises: [
+            ["Leg Press", 3, "10-12 reps"],
+            ["Goblet Squat", 3, "10-12 reps"],
+            ["Leg Curl", 3, "12 reps"],
+            ["Calf Raise", 3, "15 reps"],
+            ["Plank", 3, "30 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Shoulders + Core",
+          exercises: [
+            ["Dumbbell Shoulder Press", 3, "10-12 reps"],
+            ["Lateral Raise", 3, "12-15 reps"],
+            ["Face Pull", 2, "12-15 reps"],
+            ["Crunch", 3, "15 reps"],
+            ["Leg Raise", 3, "10-12 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Full Body + Forearms",
+          exercises: [
+            ["Dumbbell Squat", 3, "10-12 reps"],
+            ["Push-Up", 3, "8-12 reps"],
+            ["Lat Pulldown", 3, "10-12 reps"],
+            ["Dumbbell Curl", 2, "10-12 reps"],
+            ["Wrist Curl", 2, "15 reps"],
+            ["Reverse Wrist Curl", 2, "15 reps"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     INTERMEDIATE 5 DAYS
+  =================================================== */
+
+  else if (
+    selectedLevel === "Intermediate" &&
+    selectedDays === 5
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Push - Chest",
+          exercises: [
+            ["Barbell Bench Press", 4, "6-10 reps"],
+            ["Incline Dumbbell Press", 3, "8-12 reps"],
+            ["Cable Fly", 3, "10-15 reps"]
+          ]
+        },
+
+        {
+          name: "Shoulders",
+          exercises: [
+            ["Overhead Press", 3, "8-10 reps"],
+            ["Lateral Raise", 3, "12-15 reps"]
+          ]
+        },
+
+        {
+          name: "Triceps",
+          exercises: [
+            ["Triceps Pushdown", 3, "10-12 reps"],
+            ["Overhead Triceps Extension", 2, "10-12 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Pull - Back",
+          exercises: [
+            ["Lat Pulldown", 4, "8-12 reps"],
+            ["Barbell Row", 3, "8-10 reps"],
+            ["Seated Cable Row", 3, "10-12 reps"]
+          ]
+        },
+
+        {
+          name: "Biceps",
+          exercises: [
+            ["Barbell Curl", 3, "8-12 reps"],
+            ["Hammer Curl", 3, "10-12 reps"]
+          ]
+        },
+
+        {
+          name: "Forearms",
+          exercises: [
+            ["Wrist Curl", 2, "15 reps"],
+            ["Reverse Wrist Curl", 2, "15 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Legs",
+          exercises: [
+            ["Barbell Squat", 4, "6-10 reps"],
+            ["Romanian Deadlift", 3, "8-12 reps"],
+            ["Leg Press", 3, "10-12 reps"],
+            ["Leg Curl", 3, "10-15 reps"]
+          ]
+        },
+
+        {
+          name: "Core",
+          exercises: [
+            ["Hanging Leg Raise", 3, "10-15 reps"],
+            ["Cable Crunch", 3, "12-15 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Push - Chest",
+          exercises: [
+            ["Incline Barbell Press", 4, "6-10 reps"],
+            ["Flat Dumbbell Press", 3, "8-12 reps"],
+            ["Pec Deck", 3, "10-15 reps"]
+          ]
+        },
+
+        {
+          name: "Shoulders",
+          exercises: [
+            ["Seated Dumbbell Press", 3, "8-12 reps"],
+            ["Cable Lateral Raise", 3, "12-15 reps"]
+          ]
+        },
+
+        {
+          name: "Triceps",
+          exercises: [
+            ["Close Grip Bench Press", 3, "8-10 reps"],
+            ["Rope Pushdown", 3, "10-15 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Pull - Back",
+          exercises: [
+            ["Pull-Ups", 4, "6-10 reps"],
+            ["Chest Supported Row", 3, "8-12 reps"],
+            ["Single Arm Cable Row", 3, "10-12 reps"]
+          ]
+        },
+
+        {
+          name: "Biceps",
+          exercises: [
+            ["Incline Dumbbell Curl", 3, "10-12 reps"],
+            ["Preacher Curl", 3, "10-12 reps"]
+          ]
+        },
+
+        {
+          name: "Forearms + Core",
+          exercises: [
+            ["Reverse Curl", 2, "12-15 reps"],
+            ["Farmer's Walk", 2, "30-40 sec"],
+            ["Plank", 3, "45-60 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     INTERMEDIATE 6 DAYS - BOYS
+     UPDATED AS REQUESTED
+  =================================================== */
+
+  else if (
+    selectedLevel === "Intermediate" &&
+    selectedDays === 6 &&
+    gender === "Boys"
+  ) {
+
+    plan = [
+
+      /* DAY 1 */
+
+      [
+        {
+          name: "Back",
+          exercises: [
+            ["Lat Pulldown", 4, "8-12 reps"],
+            ["Barbell Row", 4, "8-10 reps"],
+            ["Seated Cable Row", 3, "10-12 reps"],
+            ["Single Arm Dumbbell Row", 3, "10-12 reps"]
+          ]
+        },
+
+        {
+          name: "Triceps",
+          exercises: [
+            ["Triceps Pushdown", 3, "10-12 reps"],
+            ["Overhead Triceps Extension", 3, "10-12 reps"]
+          ]
+        },
+
+        {
+          name: "Core",
+          exercises: [
+            ["Cable Crunch", 3, "12-15 reps"]
+          ]
+        }
+      ],
+
+
+      /* DAY 2 */
+
+      [
+        {
+          name: "Chest",
+          exercises: [
+            ["Barbell Bench Press", 4, "6-10 reps"],
+            ["Incline Dumbbell Press", 4, "8-12 reps"],
+            ["Chest Press Machine", 3, "10-12 reps"],
+            ["Cable Fly", 3, "10-15 reps"]
+          ]
+        },
+
+        {
+          name: "Biceps",
+          exercises: [
+            ["Barbell Curl", 3, "8-12 reps"],
+            ["Hammer Curl", 3, "10-12 reps"]
+          ]
+        },
+
+        {
+          name: "Forearms",
+          exercises: [
+            ["Wrist Curl", 3, "15 reps"]
+          ]
+        }
+      ],
+
+
+      /* DAY 3 */
+
+      [
+        {
+          name: "Shoulders",
+          exercises: [
+            ["Overhead Press", 4, "6-10 reps"],
+            ["Dumbbell Lateral Raise", 3, "12-15 reps"],
+            ["Rear Delt Fly", 3, "12-15 reps"],
+            ["Face Pull", 3, "12-15 reps"]
+          ]
+        },
+
+        {
+          name: "Legs",
+          exercises: [
+            ["Barbell Squat", 4, "6-10 reps"],
+            ["Romanian Deadlift", 3, "8-12 reps"]
+          ]
+        },
+
+        {
+          name: "Core",
+          exercises: [
+            ["Hanging Leg Raise", 3, "10-15 reps"]
+          ]
+        }
+      ],
+
+
+      /* DAY 4
+         4 TRICEPS + 2 BACK */
+
+      [
+        {
+          name: "Triceps",
+          exercises: [
+            ["Close Grip Bench Press", 3, "8-10 reps"],
+            ["Rope Triceps Pushdown", 3, "10-15 reps"],
+            ["Overhead Cable Triceps Extension", 3, "10-15 reps"],
+            ["Dumbbell Skull Crushers", 3, "10-12 reps"]
+          ]
+        },
+
+        {
+          name: "Back",
+          exercises: [
+            ["Pull-Ups", 4, "6-10 reps"],
+            ["Chest Supported Row", 4, "8-12 reps"]
+          ]
+        }
+      ],
+
+
+      /* DAY 5
+         4 BICEPS + 2 CHEST */
+
+      [
+        {
+          name: "Biceps",
+          exercises: [
+            ["Incline Dumbbell Curl", 3, "10-12 reps"],
+            ["Preacher Curl", 3, "10-12 reps"],
+            ["Hammer Curl", 3, "10-12 reps"],
+            ["Cable Biceps Curl", 3, "12-15 reps"]
+          ]
+        },
+
+        {
+          name: "Chest",
+          exercises: [
+            ["Incline Barbell Press", 4, "6-10 reps"],
+            ["Flat Dumbbell Press", 4, "8-12 reps"]
+          ]
+        }
+      ],
+
+
+      /* DAY 6
+         4 LEGS + 2 SHOULDERS */
+
+      [
+        {
+          name: "Legs",
+          exercises: [
+            ["Leg Press", 4, "10-12 reps"],
+            ["Romanian Deadlift", 4, "8-12 reps"],
+            ["Leg Extension", 3, "10-15 reps"],
+            ["Leg Curl", 3, "10-15 reps"]
+          ]
+        },
+
+        {
+          name: "Shoulders",
+          exercises: [
+            ["Seated Dumbbell Shoulder Press", 4, "8-12 reps"],
+            ["Cable Lateral Raise", 3, "12-15 reps"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     INTERMEDIATE 6 DAYS - GIRLS
+     EXACT GIRLS PLAN
+  =================================================== */
+
+  else if (
+    selectedLevel === "Intermediate" &&
+    selectedDays === 6 &&
+    gender === "Girls"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Legs A - Glute & Hamstring Dominant",
+          exercises: [
+            ["Barbell Hip Thrusts", 4, "10-12 reps"],
+            ["Barbell Romanian Deadlifts", 4, "10-12 reps"],
+            ["Bulgarian Split Squats", 3, "10/leg"],
+            ["Leg Curls", 3, "15 reps"],
+            ["Stability Ball Curls", 3, "15 reps"],
+            ["Calf Raises", 3, "20 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Push - Shoulders, Chest & Triceps",
+          exercises: [
+            ["Dumbbell Shoulder Press", 3, "10-12 reps"],
+            ["Dumbbell Lateral Raises", 4, "15 reps"],
+            ["Incline Chest Press", 3, "15 reps"],
+            ["Face Pulls", 3, "15 reps"],
+            ["Tricep Pushdowns", 3, "15 reps"],
+            ["Plank", 3, "1 min"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Pull - Back & Biceps Sculpt",
+          exercises: [
+            ["Lat Pulldowns", 3, "12 reps"],
+            ["Single Arm DB Rows", 3, "12/side"],
+            ["Seated Cable Rows", 3, "15 reps"],
+            ["Reverse Flys", 3, "15 reps"],
+            ["Incline Dumbbell Curls", 3, "15 reps"],
+            ["Deadbugs", 3, "15/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Legs B - Glute & Quad Dominant",
+          exercises: [
+            ["Smith Machine Squats", 3, "12 reps"],
+            ["Leg Press (Feet High & Wide)", 3, "15 reps"],
+            ["Walking Lunges", 3, "12/leg"],
+            ["Leg Extensions", 3, "15 reps"],
+            ["Abduction Machine", 4, "20 reps"],
+            ["Calf Raises", 3, "20 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Upper Body - Full Sculpt",
+          exercises: [
+            ["Arnold Press", 3, "12 reps"],
+            ["Lateral Raises", 4, "15 reps"],
+            ["Assisted Pull-Ups", 3, "10-12 reps"],
+            ["Chest Flys (Pec Deck)", 3, "15 reps"],
+            ["Hammer Curls", 3, "15 reps"],
+            ["Russian Twists", 3, "20/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Glute Isolation & Core",
+          exercises: [
+            ["Glute Bridges (Weighted)", 3, "20 reps"],
+            ["Cable Glute Kickbacks", 3, "15/side"],
+            ["Curtsy Lunges", 3, "15/leg"],
+            ["Frog Pumps", 3, "50 reps"],
+            ["Hanging Leg Raises", 3, "15 reps"],
+            ["Bird Dog", 3, "15/side"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     FALLBACK
+  =================================================== */
+
+  else {
+
+    plan = [
+
+      [
+        {
+          name: "Full Body",
+          exercises: [
+            ["Squat", 3, "10-12 reps"],
+            ["Bench Press", 3, "8-12 reps"],
+            ["Lat Pulldown", 3, "10-12 reps"],
+            ["Shoulder Press", 2, "10-12 reps"],
+            ["Biceps Curl", 2, "10-12 reps"],
+            ["Triceps Pushdown", 2, "10-12 reps"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  plan.forEach((dayGroups, index) => {
+
+    container.appendChild(
+      createDay(
+        index + 1,
+        dayGroups
+      )
+    );
+
+  });
+
+}
+
+
+/* =====================================================
+   HOME WORKOUT
+===================================================== */
+
+function showHomeWorkout(gender) {
+
+  showSection("homeWorkoutSection");
+
+  document.getElementById(
+    "homeTitle"
+  ).textContent =
+    selectedLevel +
+    " • Home • " +
+    selectedDays +
+    " Days • " +
+    gender;
+
+  const container =
+    document.getElementById("homeWorkout");
+
+  container.innerHTML = "";
+
+  let plan = [];
+
+
+  /* ===================================================
+     BEGINNER GIRLS 3 DAYS
+  =================================================== */
+
+  if (
+    selectedLevel === "Beginner" &&
+    selectedDays === 3 &&
+    gender === "Girls"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Full Body",
+          exercises: [
+            ["Bodyweight Squat", 3, "10-15 reps"],
+            ["Wall Push-Up", 3, "10-15 reps"],
+            ["Glute Bridge", 3, "12-15 reps"],
+            ["Bird Dog", 3, "10/side"],
+            ["Plank", 3, "20-30 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Upper Body + Core",
+          exercises: [
+            ["Incline Push-Up", 3, "8-12 reps"],
+            ["Pike Push-Up", 3, "8-10 reps"],
+            ["Chair Triceps Dip", 3, "8-12 reps"],
+            ["Plank Shoulder Tap", 3, "10/side"],
+            ["Dead Bug", 3, "10/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Lower Body + Glutes",
+          exercises: [
+            ["Bodyweight Squat", 3, "12-15 reps"],
+            ["Reverse Lunges", 3, "10/leg"],
+            ["Glute Bridge", 4, "15 reps"],
+            ["Donkey Kicks", 3, "15/leg"],
+            ["Calf Raises", 3, "15-20 reps"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     BEGINNER GIRLS 4 DAYS
+  =================================================== */
+
+  else if (
+    selectedLevel === "Beginner" &&
+    selectedDays === 4 &&
+    gender === "Girls"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Lower Body + Glutes",
+          exercises: [
+            ["Bodyweight Squat", 3, "12-15 reps"],
+            ["Glute Bridge", 4, "15 reps"],
+            ["Reverse Lunges", 3, "10/leg"],
+            ["Donkey Kicks", 3, "15/leg"],
+            ["Calf Raises", 3, "15-20 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Upper Body",
+          exercises: [
+            ["Incline Push-Up", 3, "8-12 reps"],
+            ["Pike Push-Up", 3, "8-10 reps"],
+            ["Chair Triceps Dip", 3, "8-12 reps"],
+            ["Plank Shoulder Tap", 3, "10/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Glutes + Legs",
+          exercises: [
+            ["Sumo Squat", 3, "12-15 reps"],
+            ["Bulgarian Split Squat", 3, "8-10/leg"],
+            ["Single Leg Glute Bridge", 3, "10/leg"],
+            ["Fire Hydrant", 3, "15/leg"],
+            ["Wall Sit", 3, "30-45 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Core + Full Body",
+          exercises: [
+            ["Bodyweight Squat", 3, "15 reps"],
+            ["Push-Up", 3, "8-12 reps"],
+            ["Mountain Climbers", 3, "20-30 sec"],
+            ["Dead Bug", 3, "10/side"],
+            ["Plank", 3, "30-45 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     BEGINNER GIRLS 5 DAYS
+  =================================================== */
+
+  else if (
+    selectedLevel === "Beginner" &&
+    selectedDays === 5 &&
+    gender === "Girls"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Glutes + Legs",
+          exercises: [
+            ["Bodyweight Squat", 4, "12-15 reps"],
+            ["Glute Bridge", 4, "15 reps"],
+            ["Reverse Lunges", 3, "10/leg"],
+            ["Donkey Kicks", 3, "15/leg"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Upper Body",
+          exercises: [
+            ["Incline Push-Up", 3, "10-12 reps"],
+            ["Pike Push-Up", 3, "8-10 reps"],
+            ["Chair Triceps Dip", 3, "10 reps"],
+            ["Plank Shoulder Tap", 3, "10/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Core",
+          exercises: [
+            ["Plank", 3, "30-45 sec"],
+            ["Dead Bug", 3, "10/side"],
+            ["Bicycle Crunch", 3, "15/side"],
+            ["Leg Raise", 3, "10-12 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Lower Body",
+          exercises: [
+            ["Sumo Squat", 4, "12-15 reps"],
+            ["Bulgarian Split Squat", 3, "10/leg"],
+            ["Single Leg Glute Bridge", 3, "10/leg"],
+            ["Fire Hydrant", 3, "15/leg"],
+            ["Calf Raises", 3, "20 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Full Body",
+          exercises: [
+            ["Squat to Knee Raise", 3, "12 reps"],
+            ["Push-Up", 3, "8-12 reps"],
+            ["Mountain Climbers", 3, "30 sec"],
+            ["Glute Bridge", 3, "15 reps"],
+            ["Plank", 3, "30-45 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     BEGINNER GIRLS 6 DAYS
+  =================================================== */
+
+  else if (
+    selectedLevel === "Beginner" &&
+    selectedDays === 6 &&
+    gender === "Girls"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Glutes + Legs",
+          exercises: [
+            ["Bodyweight Squat", 3, "12-15 reps"],
+            ["Glute Bridge", 4, "15 reps"],
+            ["Reverse Lunges", 3, "10/leg"],
+            ["Donkey Kicks", 3, "15/leg"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Upper Body",
+          exercises: [
+            ["Incline Push-Up", 3, "10-12 reps"],
+            ["Pike Push-Up", 3, "8-10 reps"],
+            ["Chair Triceps Dip", 3, "10 reps"],
+            ["Plank Shoulder Tap", 3, "10/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Core",
+          exercises: [
+            ["Plank", 3, "30-45 sec"],
+            ["Dead Bug", 3, "10/side"],
+            ["Bicycle Crunch", 3, "15/side"],
+            ["Leg Raise", 3, "10-12 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Glutes",
+          exercises: [
+            ["Sumo Squat", 4, "12-15 reps"],
+            ["Bulgarian Split Squat", 3, "10/leg"],
+            ["Single Leg Glute Bridge", 3, "10/leg"],
+            ["Fire Hydrant", 3, "15/leg"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Full Body",
+          exercises: [
+            ["Squat to Knee Raise", 3, "12 reps"],
+            ["Push-Up", 3, "8-12 reps"],
+            ["Mountain Climbers", 3, "30 sec"],
+            ["Plank", 3, "30-45 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Lower Body + Core",
+          exercises: [
+            ["Wall Sit", 3, "45 sec"],
+            ["Glute Bridge", 4, "15 reps"],
+            ["Walking Lunges", 3, "10/leg"],
+            ["Bird Dog", 3, "10/side"],
+            ["Plank", 3, "30-45 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     INTERMEDIATE GIRLS 3 DAYS
+  =================================================== */
+
+  else if (
+    selectedLevel === "Intermediate" &&
+    selectedDays === 3 &&
+    gender === "Girls"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Glutes + Legs",
+          exercises: [
+            ["Bulgarian Split Squat", 4, "8-12/leg"],
+            ["Single Leg Glute Bridge", 4, "12/leg"],
+            ["Reverse Lunges", 3, "12/leg"],
+            ["Wall Sit", 3, "45-60 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Upper Body + Core",
+          exercises: [
+            ["Push-Up", 4, "8-15 reps"],
+            ["Pike Push-Up", 3, "8-12 reps"],
+            ["Chair Triceps Dip", 3, "10-15 reps"],
+            ["Plank Shoulder Tap", 3, "15/side"],
+            ["Dead Bug", 3, "12/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Full Body + Glutes",
+          exercises: [
+            ["Jump Squat", 3, "10-15 reps"],
+            ["Single Leg Squat to Chair", 3, "8-10/leg"],
+            ["Glute Bridge", 4, "15-20 reps"],
+            ["Mountain Climbers", 3, "30 sec"],
+            ["Plank", 3, "45-60 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     INTERMEDIATE GIRLS 4 DAYS
+  =================================================== */
+
+  else if (
+    selectedLevel === "Intermediate" &&
+    selectedDays === 4 &&
+    gender === "Girls"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Glutes + Hamstrings",
+          exercises: [
+            ["Single Leg Glute Bridge", 4, "12/leg"],
+            ["Bulgarian Split Squat", 4, "8-12/leg"],
+            ["Single Leg Romanian Deadlift", 3, "10/leg"],
+            ["Hamstring Walkouts", 3, "10 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Upper Body",
+          exercises: [
+            ["Push-Up", 4, "8-15 reps"],
+            ["Pike Push-Up", 3, "8-12 reps"],
+            ["Chair Triceps Dip", 3, "10-15 reps"],
+            ["Plank Shoulder Tap", 3, "15/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Quads + Glutes",
+          exercises: [
+            ["Bulgarian Split Squat", 4, "10/leg"],
+            ["Jump Squat", 3, "12 reps"],
+            ["Reverse Lunge", 3, "12/leg"],
+            ["Wall Sit", 3, "45-60 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Core + Full Body",
+          exercises: [
+            ["Push-Up", 3, "10-15 reps"],
+            ["Mountain Climbers", 4, "30 sec"],
+            ["Bicycle Crunch", 3, "15/side"],
+            ["Leg Raise", 3, "12 reps"],
+            ["Plank", 3, "45-60 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     INTERMEDIATE GIRLS 5 DAYS
+  =================================================== */
+
+  else if (
+    selectedLevel === "Intermediate" &&
+    selectedDays === 5 &&
+    gender === "Girls"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Glutes + Hamstrings",
+          exercises: [
+            ["Bulgarian Split Squat", 4, "8-12/leg"],
+            ["Single Leg Glute Bridge", 4, "12/leg"],
+            ["Single Leg Romanian Deadlift", 3, "10/leg"],
+            ["Hamstring Walkouts", 3, "10 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Upper Body",
+          exercises: [
+            ["Push-Up", 4, "8-15 reps"],
+            ["Pike Push-Up", 3, "8-12 reps"],
+            ["Chair Triceps Dip", 3, "10-15 reps"],
+            ["Plank Shoulder Tap", 3, "15/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Quads + Glutes",
+          exercises: [
+            ["Bulgarian Split Squat", 4, "10/leg"],
+            ["Jump Squat", 3, "12 reps"],
+            ["Reverse Lunge", 3, "12/leg"],
+            ["Wall Sit", 3, "45-60 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Core",
+          exercises: [
+            ["Plank", 4, "45-60 sec"],
+            ["Bicycle Crunch", 3, "15/side"],
+            ["Leg Raise", 3, "12 reps"],
+            ["Dead Bug", 3, "12/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Full Body",
+          exercises: [
+            ["Jump Squat", 3, "12 reps"],
+            ["Push-Up", 3, "10-15 reps"],
+            ["Mountain Climbers", 3, "30 sec"],
+            ["Glute Bridge", 4, "20 reps"],
+            ["Plank", 3, "45 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     INTERMEDIATE GIRLS 6 DAYS
+  =================================================== */
+
+  else if (
+    selectedLevel === "Intermediate" &&
+    selectedDays === 6 &&
+    gender === "Girls"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Glutes + Hamstrings",
+          exercises: [
+            ["Bulgarian Split Squat", 4, "8-12/leg"],
+            ["Single Leg Glute Bridge", 4, "12/leg"],
+            ["Single Leg Romanian Deadlift", 3, "10/leg"],
+            ["Hamstring Walkouts", 3, "10 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Upper Body",
+          exercises: [
+            ["Push-Up", 4, "8-15 reps"],
+            ["Pike Push-Up", 3, "8-12 reps"],
+            ["Chair Triceps Dip", 3, "10-15 reps"],
+            ["Plank Shoulder Tap", 3, "15/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Quads + Glutes",
+          exercises: [
+            ["Bulgarian Split Squat", 4, "10/leg"],
+            ["Jump Squat", 3, "12 reps"],
+            ["Reverse Lunge", 3, "12/leg"],
+            ["Wall Sit", 3, "45-60 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Core",
+          exercises: [
+            ["Plank", 4, "45-60 sec"],
+            ["Bicycle Crunch", 3, "15/side"],
+            ["Leg Raise", 3, "12 reps"],
+            ["Dead Bug", 3, "12/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Full Body",
+          exercises: [
+            ["Jump Squat", 3, "12 reps"],
+            ["Push-Up", 3, "10-15 reps"],
+            ["Mountain Climbers", 3, "30 sec"],
+            ["Glute Bridge", 4, "20 reps"],
+            ["Plank", 3, "45 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Glute Isolation + Core",
+          exercises: [
+            ["Single Leg Glute Bridge", 4, "15/leg"],
+            ["Fire Hydrant", 3, "20/leg"],
+            ["Donkey Kicks", 3, "20/leg"],
+            ["Frog Pumps", 4, "25 reps"],
+            ["Leg Raise", 3, "15 reps"],
+            ["Bird Dog", 3, "15/side"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     HOME - BOYS - 3 DAYS
+  =================================================== */
+
+  else if (
+    selectedLevel === "Beginner" &&
+    selectedDays === 3 &&
+    gender === "Boys"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Full Body",
+          exercises: [
+            ["Push-Up", 3, "10-15 reps"],
+            ["Bodyweight Squat", 3, "12-15 reps"],
+            ["Backpack Row", 3, "10-12 reps"],
+            ["Glute Bridge", 3, "15 reps"],
+            ["Plank", 3, "30 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Upper Body + Core",
+          exercises: [
+            ["Push-Up", 4, "8-15 reps"],
+            ["Pike Push-Up", 3, "8-12 reps"],
+            ["Chair Triceps Dip", 3, "10-15 reps"],
+            ["Backpack Curl", 3, "10-12 reps"],
+            ["Plank Shoulder Tap", 3, "10/side"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Lower Body",
+          exercises: [
+            ["Bodyweight Squat", 4, "12-15 reps"],
+            ["Reverse Lunge", 3, "10/leg"],
+            ["Glute Bridge", 3, "15 reps"],
+            ["Calf Raise", 3, "20 reps"],
+            ["Plank", 3, "30 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     HOME - BOYS - 4 DAYS
+  =================================================== */
+
+  else if (
+    selectedDays === 4 &&
+    gender === "Boys"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Chest + Triceps",
+          exercises: [
+            ["Push-Up", 4, "10-15 reps"],
+            ["Decline Push-Up", 3, "8-12 reps"],
+            ["Chair Triceps Dip", 3, "10-15 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Back + Biceps",
+          exercises: [
+            ["Backpack Row", 4, "10-15 reps"],
+            ["Inverted Row", 3, "8-12 reps"],
+            ["Backpack Curl", 3, "10-15 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Legs",
+          exercises: [
+            ["Bodyweight Squat", 4, "12-15 reps"],
+            ["Reverse Lunge", 3, "10/leg"],
+            ["Glute Bridge", 3, "15 reps"],
+            ["Calf Raise", 4, "20 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Shoulders + Core",
+          exercises: [
+            ["Pike Push-Up", 4, "8-12 reps"],
+            ["Plank Shoulder Tap", 3, "15/side"],
+            ["Plank", 3, "45-60 sec"],
+            ["Mountain Climbers", 3, "30 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     HOME - BOYS - 5 DAYS
+  =================================================== */
+
+  else if (
+    selectedDays === 5 &&
+    gender === "Boys"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Chest + Triceps",
+          exercises: [
+            ["Push-Up", 4, "10-15 reps"],
+            ["Decline Push-Up", 3, "8-12 reps"],
+            ["Chair Triceps Dip", 3, "10-15 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Back + Biceps",
+          exercises: [
+            ["Backpack Row", 4, "10-15 reps"],
+            ["Inverted Row", 3, "8-12 reps"],
+            ["Backpack Curl", 3, "10-15 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Legs",
+          exercises: [
+            ["Bodyweight Squat", 4, "12-15 reps"],
+            ["Reverse Lunge", 3, "10/leg"],
+            ["Glute Bridge", 3, "15 reps"],
+            ["Calf Raise", 4, "20 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Shoulders + Core",
+          exercises: [
+            ["Pike Push-Up", 4, "8-12 reps"],
+            ["Plank Shoulder Tap", 3, "15/side"],
+            ["Plank", 3, "45-60 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Full Body",
+          exercises: [
+            ["Burpees", 3, "8-12 reps"],
+            ["Push-Up", 3, "10-15 reps"],
+            ["Bodyweight Squat", 3, "15 reps"],
+            ["Mountain Climbers", 3, "30 sec"],
+            ["Plank", 3, "45 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     HOME - BOYS - 6 DAYS
+  =================================================== */
+
+  else if (
+    selectedDays === 6 &&
+    gender === "Boys"
+  ) {
+
+    plan = [
+
+      [
+        {
+          name: "Chest + Triceps",
+          exercises: [
+            ["Push-Up", 4, "10-15 reps"],
+            ["Decline Push-Up", 3, "8-12 reps"],
+            ["Chair Triceps Dip", 3, "10-15 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Back + Biceps",
+          exercises: [
+            ["Backpack Row", 4, "10-15 reps"],
+            ["Inverted Row", 3, "8-12 reps"],
+            ["Backpack Curl", 3, "10-15 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Legs",
+          exercises: [
+            ["Bodyweight Squat", 4, "12-15 reps"],
+            ["Reverse Lunge", 3, "10/leg"],
+            ["Glute Bridge", 3, "15 reps"],
+            ["Calf Raise", 4, "20 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Shoulders + Core",
+          exercises: [
+            ["Pike Push-Up", 4, "8-12 reps"],
+            ["Plank Shoulder Tap", 3, "15/side"],
+            ["Mountain Climbers", 3, "30 sec"],
+            ["Plank", 3, "45-60 sec"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Arms",
+          exercises: [
+            ["Diamond Push-Up", 3, "8-12 reps"],
+            ["Backpack Curl", 3, "10-15 reps"],
+            ["Chair Triceps Dip", 3, "10-15 reps"]
+          ]
+        }
+      ],
+
+      [
+        {
+          name: "Full Body + Core",
+          exercises: [
+            ["Burpees", 3, "8-12 reps"],
+            ["Push-Up", 3, "10-15 reps"],
+            ["Bodyweight Squat", 3, "15 reps"],
+            ["Mountain Climbers", 3, "30 sec"],
+            ["Plank", 3, "45-60 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  /* ===================================================
+     HOME FALLBACK
+  =================================================== */
+
+  else {
+
+    plan = [
+
+      [
+        {
+          name: "Full Body",
+          exercises: [
+            ["Bodyweight Squat", 3, "12-15 reps"],
+            ["Push-Up", 3, "8-12 reps"],
+            ["Glute Bridge", 3, "15 reps"],
+            ["Plank", 3, "30 sec"]
+          ]
+        }
+      ]
+
+    ];
+
+  }
+
+
+  plan.forEach((dayGroups, index) => {
+
+    container.appendChild(
+      createDay(
+        index + 1,
+        dayGroups
+      )
+    );
+
+  });
+
+}
+
+
+/* =====================================================
+   HOME
+===================================================== */
+
+function goHome() {
+
+  window.location.href = "home.html";
+
+}
+
+</script>
+
+</body>
+
+</html>

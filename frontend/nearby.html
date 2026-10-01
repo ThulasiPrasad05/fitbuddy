@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Nearby Gyms - FitBuddy</title>
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      color: #222;
+    }
+
+
+    /* =========================================
+       HEADER
+    ========================================= */
+
+    header {
+
+      height: 70px;
+
+      padding: 15px 20px;
+
+      background: white;
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      border-bottom: 1px solid #ddd;
+
+      position: sticky;
+
+      top: 0;
+
+      z-index: 10;
+
+    }
+
+
+    .logo {
+
+      font-size: 22px;
+
+      font-weight: bold;
+
+    }
+
+
+    .home-btn {
+
+      border: none;
+
+      background: #111;
+
+      color: white;
+
+      padding: 10px 15px;
+
+      border-radius: 10px;
+
+      cursor: pointer;
+
+      font-size: 13px;
+
+    }
+
+
+    .home-btn:hover {
+
+      background: #333;
+
+    }
+
+
+    /* =========================================
+       MAIN CONTAINER
+    ========================================= */
+
+    .container {
+
+      max-width: 1000px;
+
+      margin: auto;
+
+      padding: 25px 20px;
+
+    }
+
+
+    /* =========================================
+       TITLE
+    ========================================= */
+
+    .title {
+
+      margin-bottom: 20px;
+
+    }
+
+
+    .title h1 {
+
+      margin: 0 0 8px 0;
+
+      font-size: 28px;
+
+    }
+
+
+    .title p {
+
+      margin: 0;
+
+      color: #666;
+
+      font-size: 14px;
+
+    }
+
+
+    /* =========================================
+       SEARCH BOX
+    ========================================= */
+
+    .search-box {
+
+      background: white;
+
+      padding: 20px;
+
+      border-radius: 16px;
+
+      border: 1px solid #ddd;
+
+      margin-bottom: 25px;
+
+    }
+
+
+    .search-label {
+
+      display: block;
+
+      font-size: 14px;
+
+      font-weight: bold;
+
+      margin-bottom: 10px;
+
+    }
+
+
+    .search-row {
+
+      display: flex;
+
+      gap: 10px;
+
+    }
+
+
+    #locationInput {
+
+      flex: 1;
+
+      padding: 14px 15px;
+
+      border: 1px solid #ccc;
+
+      border-radius: 10px;
+
+      font-size: 15px;
+
+      outline: none;
+
+    }
+
+
+    #locationInput:focus {
+
+      border-color: #111;
+
+    }
+
+
+    #searchBtn {
+
+      padding: 14px 20px;
+
+      border: none;
+
+      border-radius: 10px;
+
+      background: #111;
+
+      color: white;
+
+      cursor: pointer;
+
+      font-size: 14px;
+
+      font-weight: bold;
+
+    }
+
+
+    #searchBtn:hover {
+
+      background: #333;
+
+    }
+
+
+    #searchBtn:disabled {
+
+      background: #999;
+
+      cursor: not-allowed;
+
+    }
+
+
+    /* =========================================
+       SEARCH INFO
+    ========================================= */
+
+    .search-info {
+
+      display: none;
+
+      background: #f1f1f1;
+
+      padding: 14px 16px;
+
+      border-radius: 12px;
+
+      margin-bottom: 20px;
+
+      font-size: 14px;
+
+      color: #555;
+
+      line-height: 1.5;
+
+    }
+
+
+    /* =========================================
+       RESULTS HEADER
+    ========================================= */
+
+    .results-header {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      margin-bottom: 15px;
+
+    }
+
+
+    .results-header h2 {
+
+      margin: 0;
+
+      font-size: 19px;
+
+    }
+
+
+    #resultCount {
+
+      color: #777;
+
+      font-size: 13px;
+
+    }
+
+
+    /* =========================================
+       GYM CARD
+    ========================================= */
+
+    .gym-card {
+
+      background: white;
+
+      border: 1px solid #e1e1e1;
+
+      border-radius: 16px;
+
+      padding: 18px;
+
+      margin-bottom: 12px;
+
+      display: flex;
+
+      align-items: flex-start;
+
+      gap: 15px;
+
+      transition: 0.2s;
+
+    }
+
+
+    .gym-card:hover {
+
+      transform: translateY(-2px);
+
+      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+
+    }
+
+
+    .gym-icon {
+
+      width: 55px;
+
+      height: 55px;
+
+      min-width: 55px;
+
+      border-radius: 14px;
+
+      background: #f1f1f1;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      font-size: 27px;
+
+    }
+
+
+    .gym-info {
+
+      flex: 1;
+
+      min-width: 0;
+
+    }
+
+
+    .gym-name {
+
+      font-size: 17px;
+
+      font-weight: bold;
+
+      margin-bottom: 7px;
+
+    }
+
+
+    .gym-address {
+
+      color: #666;
+
+      font-size: 13px;
+
+      line-height: 1.4;
+
+      margin-bottom: 8px;
+
+    }
+
+
+    .gym-meta {
+
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 8px;
+
+      font-size: 12px;
+
+    }
+
+
+    .badge {
+
+      background: #f1f1f1;
+
+      padding: 5px 8px;
+
+      border-radius: 7px;
+
+    }
+
+
+    .distance {
+
+      background: #111;
+
+      color: white;
+
+    }
+
+
+    .open {
+
+      background: #e8f7ed;
+
+      color: #18733a;
+
+    }
+
+
+    .closed {
+
+      background: #fbeaea;
+
+      color: #a33;
+
+    }
+
+
+    /* =========================================
+       ACTIONS
+    ========================================= */
+
+    .gym-actions {
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 8px;
+
+      min-width: 105px;
+
+    }
+
+
+    .action-btn {
+
+      border: none;
+
+      padding: 9px 12px;
+
+      border-radius: 9px;
+
+      cursor: pointer;
+
+      font-size: 12px;
+
+      text-align: center;
+
+      text-decoration: none;
+
+    }
+
+
+    .map-btn {
+
+      background: #111;
+
+      color: white;
+
+    }
+
+
+    .call-btn {
+
+      background: white;
+
+      color: #111;
+
+      border: 1px solid #ccc;
+
+    }
+
+
+    .action-btn:hover {
+
+      opacity: 0.8;
+
+    }
+
+
+    /* =========================================
+       MESSAGE
+    ========================================= */
+
+    .message {
+
+      text-align: center;
+
+      padding: 50px 20px;
+
+      color: #666;
+
+    }
+
+
+    .message-icon {
+
+      font-size: 45px;
+
+      margin-bottom: 10px;
+
+    }
+
+
+    .message h3 {
+
+      margin: 5px 0 8px;
+
+      color: #333;
+
+    }
+
+
+    .message p {
+
+      margin: 0;
+
+      font-size: 14px;
+
+    }
+
+
+    /* =========================================
+       LOADING
+    ========================================= */
+
+    .loading {
+
+      display: none;
+
+      text-align: center;
+
+      padding: 35px;
+
+      color: #666;
+
+    }
+
+
+    .spinner {
+
+      width: 35px;
+
+      height: 35px;
+
+      border: 4px solid #ddd;
+
+      border-top: 4px solid #111;
+
+      border-radius: 50%;
+
+      animation: spin 1s linear infinite;
+
+      margin: auto auto 12px;
+
+    }
+
+
+    @keyframes spin {
+
+      to {
+
+        transform: rotate(360deg);
+
+      }
+
+    }
+
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    @media (max-width: 650px) {
+
+      header {
+
+        padding: 12px 15px;
+
+      }
+
+
+      .logo {
+
+        font-size: 19px;
+
+      }
+
+
+      .container {
+
+        padding: 20px 12px;
+
+      }
+
+
+      .title h1 {
+
+        font-size: 24px;
+
+      }
+
+
+      .search-row {
+
+        flex-direction: column;
+
+      }
+
+
+      #searchBtn {
+
+        width: 100%;
+
+      }
+
+
+      .gym-card {
+
+        flex-direction: column;
+
+      }
+
+
+      .gym-icon {
+
+        width: 50px;
+
+        height: 50px;
+
+        min-width: 50px;
+
+      }
+
+
+      .gym-actions {
+
+        width: 100%;
+
+        flex-direction: row;
+
+      }
+
+
+      .action-btn {
+
+        flex: 1;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- =========================================
+       HEADER
+  ========================================= -->
+
+  <header>
+
+    <div class="logo">
+      💪 FitBuddy
+    </div>
+
+
+    <button
+      class="home-btn"
+      onclick="goHome()"
+    >
+      ← Home
+    </button>
+
+  </header>
+
+
+
+  <!-- =========================================
+       MAIN
+  ========================================= -->
+
+  <div class="container">
+
+
+    <div class="title">
+
+      <h1>
+        🏋️ Nearby Gyms
+      </h1>
+
+      <p>
+        Find gyms within 5 km of your village or city.
+      </p>
+
+    </div>
+
+
+
+    <!-- =========================================
+         SEARCH
+    ========================================= -->
+
+    <div class="search-box">
+
+      <label
+        class="search-label"
+        for="locationInput"
+      >
+        Enter your village or city
+      </label>
+
+
+      <div class="search-row">
+
+        <input
+          id="locationInput"
+          type="text"
+          placeholder="Example: Doddaballapura"
+          autocomplete="off"
+        />
+
+
+        <button
+          id="searchBtn"
+          onclick="searchGyms()"
+        >
+          🔍 Search
+        </button>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         SEARCH INFO
+    ========================================= -->
+
+    <div
+      id="searchInfo"
+      class="search-info"
+    ></div>
+
+
+
+    <!-- =========================================
+         LOADING
+    ========================================= -->
+
+    <div
+      id="loading"
+      class="loading"
+    >
+
+      <div class="spinner"></div>
+
+      <div>
+        Finding nearby gyms...
+      </div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         RESULTS
+    ========================================= -->
+
+    <div id="resultsSection">
+
+
+      <div class="results-header">
+
+        <h2>
+          Nearby Gyms
+        </h2>
+
+        <span id="resultCount">
+          Enter a location to search
+        </span>
+
+      </div>
+
+
+      <div id="gymList">
+
+        <div class="message">
+
+          <div class="message-icon">
+            📍
+          </div>
+
+          <h3>
+            Find gyms near you
+          </h3>
+
+          <p>
+            Enter your village or city above to find gyms within 5 km.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+
+  <script>
+
+
+    // =====================================================
+    // GO HOME
+    // =====================================================
+
+    function goHome() {
+
+      window.location.href = "home.html";
+
+    }
+
+
+
+    // =====================================================
+    // SEARCH WHEN ENTER IS PRESSED
+    // =====================================================
+
+    document
+      .getElementById("locationInput")
+      .addEventListener(
+        "keydown",
+        function(event) {
+
+          if (event.key === "Enter") {
+
+            searchGyms();
+
+          }
+
+        }
+      );
+
+
+
+    // =====================================================
+    // SEARCH GYMS
+    // =====================================================
+
+    async function searchGyms() {
+
+
+      const input =
+        document.getElementById(
+          "locationInput"
+        );
+
+
+      const button =
+        document.getElementById(
+          "searchBtn"
+        );
+
+
+      const gymList =
+        document.getElementById(
+          "gymList"
+        );
+
+
+      const resultCount =
+        document.getElementById(
+          "resultCount"
+        );
+
+
+      const loading =
+        document.getElementById(
+          "loading"
+        );
+
+
+      const searchInfo =
+        document.getElementById(
+          "searchInfo"
+        );
+
+
+      const location =
+        input.value.trim();
+
+
+
+      // =================================================
+      // VALIDATION
+      // =================================================
+
+      if (!location) {
+
+        alert(
+          "Please enter a village or city."
+        );
+
+        input.focus();
+
+        return;
+
+      }
+
+
+
+      // =================================================
+      // LOADING STATE
+      // =================================================
+
+      button.disabled = true;
+
+      button.textContent =
+        "Searching...";
+
+
+      loading.style.display =
+        "block";
+
+
+      gymList.innerHTML = "";
+
+
+      resultCount.textContent =
+        "Searching...";
+
+
+      searchInfo.style.display =
+        "none";
+
+
+
+      try {
+
+
+        // ===============================================
+        // CALL FITBUDDY BACKEND
+        // ===============================================
+
+        const response =
+          await fetch(
+            `http://localhost:5000/api/gyms/nearby?location=${encodeURIComponent(location)}`
+          );
+
+
+        const data =
+          await response.json();
+
+
+
+        // ===============================================
+        // HANDLE ERROR
+        // ===============================================
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.message ||
+            "Unable to find nearby gyms."
+          );
+
+        }
+
+
+
+        // ===============================================
+        // HIDE LOADING
+        // ===============================================
+
+        loading.style.display =
+          "none";
+
+
+
+        // ===============================================
+        // SHOW SEARCH LOCATION
+        // ===============================================
+
+        searchInfo.innerHTML = `
+
+          📍 Searching around
+          <strong>
+            ${escapeHTML(
+              data.matchedLocation ||
+              location
+            )}
+          </strong>
+
+          <br>
+
+          <span>
+            ${escapeHTML(
+              data.matchedAddress ||
+              ""
+            )}
+          </span>
+
+          <br>
+
+          🏋️ Showing gyms within
+          <strong>
+            5 km
+          </strong>
+
+        `;
+
+
+        searchInfo.style.display =
+          "block";
+
+
+
+        // ===============================================
+        // GET GYMS
+        // ===============================================
+
+        const gyms =
+          data.gyms || [];
+
+
+
+        resultCount.textContent =
+          `${gyms.length} gym${gyms.length === 1 ? "" : "s"} found`;
+
+
+
+        // ===============================================
+        // NO RESULTS
+        // ===============================================
+
+        if (gyms.length === 0) {
+
+          gymList.innerHTML = `
+
+            <div class="message">
+
+              <div class="message-icon">
+                😕
+              </div>
+
+              <h3>
+                No gyms found
+              </h3>
+
+              <p>
+                We couldn't find any gyms within 5 km of this location.
+                Try another nearby village or city.
+              </p>
+
+            </div>
+
+          `;
+
+          return;
+
+        }
+
+
+
+        // ===============================================
+        // DISPLAY GYMS
+        // ===============================================
+
+        gyms.forEach(
+          gym => {
+
+            createGymCard(
+              gym,
+              gymList
+            );
+
+          }
+        );
+
+
+      } catch (error) {
+
+
+        console.error(
+          "Nearby gyms error:",
+          error
+        );
+
+
+        loading.style.display =
+          "none";
+
+
+        resultCount.textContent =
+          "Search failed";
+
+
+        gymList.innerHTML = `
+
+          <div class="message">
+
+            <div class="message-icon">
+              ⚠️
+            </div>
+
+            <h3>
+              Unable to find gyms
+            </h3>
+
+            <p>
+              ${escapeHTML(
+                error.message ||
+                "Something went wrong."
+              )}
+            </p>
+
+          </div>
+
+        `;
+
+
+      } finally {
+
+
+        button.disabled =
+          false;
+
+
+        button.textContent =
+          "🔍 Search";
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // CREATE GYM CARD
+    // =====================================================
+
+    function createGymCard(
+      gym,
+      container
+    ) {
+
+
+      const card =
+        document.createElement(
+          "div"
+        );
+
+
+      card.className =
+        "gym-card";
+
+
+
+      // =================================================
+      // ICON
+      // =================================================
+
+      const icon =
+        document.createElement(
+          "div"
+        );
+
+
+      icon.className =
+        "gym-icon";
+
+
+      icon.textContent =
+        "🏋️";
+
+
+
+      // =================================================
+      // INFO
+      // =================================================
+
+      const info =
+        document.createElement(
+          "div"
+        );
+
+
+      info.className =
+        "gym-info";
+
+
+
+      const name =
+        escapeHTML(
+          gym.name ||
+          "Gym"
+        );
+
+
+      const address =
+        escapeHTML(
+          gym.address ||
+          "Address not available"
+        );
+
+
+      let metaHTML = "";
+
+
+
+      // DISTANCE
+
+      if (
+        gym.distance !== null &&
+        gym.distance !== undefined
+      ) {
+
+        metaHTML += `
+
+          <span class="badge distance">
+
+            📍 ${gym.distance} km
+
+          </span>
+
+        `;
+
+      }
+
+
+
+      // RATING
+
+      if (
+        gym.rating !== null &&
+        gym.rating !== undefined
+      ) {
+
+        metaHTML += `
+
+          <span class="badge">
+
+            ⭐ ${gym.rating}
+
+            ${
+              gym.userRatingCount
+                ? `(${gym.userRatingCount})`
+                : ""
+            }
+
+          </span>
+
+        `;
+
+      }
+
+
+
+      // OPEN / CLOSED
+
+      if (
+        gym.openNow === true
+      ) {
+
+        metaHTML += `
+
+          <span class="badge open">
+            ● Open now
+          </span>
+
+        `;
+
+      }
+
+
+      if (
+        gym.openNow === false
+      ) {
+
+        metaHTML += `
+
+          <span class="badge closed">
+            ● Closed
+          </span>
+
+        `;
+
+      }
+
+
+
+      info.innerHTML = `
+
+        <div class="gym-name">
+          ${name}
+        </div>
+
+        <div class="gym-address">
+          📍 ${address}
+        </div>
+
+        <div class="gym-meta">
+          ${metaHTML}
+        </div>
+
+      `;
+
+
+
+      // =================================================
+      // ACTIONS
+      // =================================================
+
+      const actions =
+        document.createElement(
+          "div"
+        );
+
+
+      actions.className =
+        "gym-actions";
+
+
+
+      // MAP BUTTON
+
+      if (gym.mapsUrl) {
+
+        const mapButton =
+          document.createElement(
+            "a"
+          );
+
+
+        mapButton.className =
+          "action-btn map-btn";
+
+
+        mapButton.href =
+          gym.mapsUrl;
+
+
+        mapButton.target =
+          "_blank";
+
+
+        mapButton.rel =
+          "noopener noreferrer";
+
+
+        mapButton.textContent =
+          "🗺️ Map";
+
+
+        actions.appendChild(
+          mapButton
+        );
+
+      }
+
+
+
+      // CALL BUTTON
+
+      if (gym.phone) {
+
+        const callButton =
+          document.createElement(
+            "a"
+          );
+
+
+        callButton.className =
+          "action-btn call-btn";
+
+
+        callButton.href =
+          `tel:${gym.phone}`;
+
+
+        callButton.textContent =
+          "📞 Call";
+
+
+        actions.appendChild(
+          callButton
+        );
+
+      }
+
+
+
+      // =================================================
+      // ADD CARD
+      // =================================================
+
+      card.appendChild(
+        icon
+      );
+
+
+      card.appendChild(
+        info
+      );
+
+
+      card.appendChild(
+        actions
+      );
+
+
+      container.appendChild(
+        card
+      );
+
+    }
+
+
+
+    // =====================================================
+    // ESCAPE HTML
+    // =====================================================
+
+    function escapeHTML(
+      value
+    ) {
+
+      return String(
+        value ?? ""
+      )
+
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+
+        .replace(
+          /</g,
+          "&lt;"
+        )
+
+        .replace(
+          />/g,
+          "&gt;"
+        )
+
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+  </script>
+
+
+</body>
+
+</html>

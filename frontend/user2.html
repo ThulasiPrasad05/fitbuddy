@@ -1,0 +1,76 @@
+<script src="http://localhost:5000/socket.io/socket.io.js"></script>
+
+<script>
+  const socket = io("http://localhost:5000");
+
+  // ✅ GET LOGGED-IN USER
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
+  if (!currentUser) {
+    alert("Please login first");
+    window.location.href = "login.html";
+  }
+
+  const senderId = currentUser._id;
+
+  // 👉 enter receiver id manually for now
+  const receiverId = prompt("Enter receiver ID");
+
+  const room = [senderId, receiverId].sort().join("_");
+
+  socket.emit("join_room", room);
+
+  const messagesList = document.getElementById("messages");
+
+  // ✅ LOAD OLD MESSAGES (FIXED)
+  async function loadMessages() {
+    const res = await fetch(`http://localhost:5000/api/users/messages/${senderId}/${receiverId}`);
+    const data = await res.json();
+
+    // 🔥 FIX: use data.messages
+    data.messages.forEach(msg => {
+      const li = document.createElement("li");
+      li.textContent = msg.sender + ": " + msg.text;
+      messagesList.appendChild(li);
+    });
+  }
+
+  loadMessages();
+
+  // 📩 RECEIVE MESSAGE
+  socket.on("receive_message", (data) => {
+    const li = document.createElement("li");
+    li.textContent = data.sender + ": " + data.text;
+    messagesList.appendChild(li);
+  });
+
+  // 📤 SEND MESSAGE
+  async function sendMessage() {
+    const input = document.getElementById("messageInput");
+    const message = input.value;
+
+    if (!message.trim()) return;
+
+    // 💾 SAVE TO DATABASE
+    await fetch("http://localhost:5000/api/users/message", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        senderId,
+        receiverId,
+        text: message
+      })
+    });
+
+    // ⚡ REALTIME
+    socket.emit("send_message", {
+      room: room,
+      sender: senderId,
+      text: message
+    });
+
+    input.value = "";
+  }
+</script>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FitBuddy Profile</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f5f7;
+      color: #222;
+    }
+
+    .header {
+      background: white;
+      padding: 18px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .back-top {
+      border: none;
+      background: #f0f0f0;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 0 15px;
+    }
+
+    .profile-card {
+      background: white;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    }
+
+    .profile-top {
+      text-align: center;
+      padding: 30px 20px 20px;
+    }
+
+    .profile-img {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid #f1f1f1;
+    }
+
+    .name {
+      font-size: 28px;
+      margin: 15px 0 5px;
+    }
+
+    .location {
+      color: #666;
+      margin: 0;
+    }
+
+    .details {
+      padding: 10px 25px 25px;
+    }
+
+    .section {
+      margin-top: 20px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #777;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .info-box {
+      background: #f7f7f7;
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 15px;
+    }
+
+    .workout {
+      display: inline-block;
+      background: #222;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+    .goals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .goal {
+      background: #f0f0f0;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+    .plan {
+      line-height: 1.6;
+      color: #444;
+    }
+
+    .actions {
+      padding: 20px 25px 25px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .actions button {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .like-btn {
+      background: #111;
+      color: white;
+    }
+
+    .chat-btn {
+      background: #e9e9e9;
+      color: #111;
+    }
+
+    .back-btn {
+      background: #ddd;
+      color: #222;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    #message {
+      text-align: center;
+      margin: 0 25px 20px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 15px auto;
+      }
+
+      .name {
+        font-size: 24px;
+      }
+
+      .profile-img {
+        width: 120px;
+        height: 120px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div class="logo">FitBuddy 💪</div>
+
+    <button class="back-top" onclick="goBack()">
+      ← Back
+    </button>
+  </div>
+
+
+  <div class="container">
+
+    <div class="profile-card">
+
+      <div class="profile-top">
+
+        <img
+          id="img"
+          class="profile-img"
+          src="https://i.pravatar.cc/150"
+          alt="Profile"
+        >
+
+        <h1 id="name" class="name">Loading...</h1>
+
+        <p class="location">
+          📍 <span id="location"></span>
+        </p>
+
+      </div>
+
+
+      <div class="details">
+
+        <!-- Workout -->
+        <div class="section">
+
+          <div class="section-title">
+            Workout
+          </div>
+
+          <span id="workout" class="workout"></span>
+
+        </div>
+
+
+        <!-- Goals -->
+        <div class="section">
+
+          <div class="section-title">
+            Fitness Goals
+          </div>
+
+          <div id="goals" class="goals"></div>
+
+        </div>
+
+
+        <!-- Workout Plan -->
+        <div class="section">
+
+          <div class="section-title">
+            Workout Plan
+          </div>
+
+          <div id="plan" class="info-box plan"></div>
+
+        </div>
+
+      </div>
+
+
+      <div id="message"></div>
+
+
+      <div class="actions">
+
+        <button
+          class="like-btn"
+          onclick="likeUser()"
+        >
+          ❤️ Like
+        </button>
+
+        <button
+          class="chat-btn"
+          onclick="openChat()"
+        >
+          💬 My Matches
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+<script>
+
+const viewedUser = JSON.parse(
+  localStorage.getItem("viewUser")
+);
+
+const currentUser = JSON.parse(
+  localStorage.getItem("user")
+);
+
+
+// Check if profile exists
+if (!viewedUser) {
+
+  alert("Profile not found.");
+
+  window.location.href = "home.html";
+
+}
+
+
+// Display profile picture
+document.getElementById("img").src =
+  viewedUser.picture ||
+  viewedUser.profilePic ||
+  "https://i.pravatar.cc/150";
+
+
+// Display name
+document.getElementById("name").textContent =
+  viewedUser.name || "Unknown User";
+
+
+// Display location
+document.getElementById("location").textContent =
+  viewedUser.location || "Location not specified";
+
+
+// Display workout
+document.getElementById("workout").textContent =
+  viewedUser.workoutType || "Not specified";
+
+
+// Display goals
+const goalsContainer =
+  document.getElementById("goals");
+
+const goals = viewedUser.goals || [];
+
+if (goals.length === 0) {
+
+  goalsContainer.innerHTML =
+    '<span class="goal">No goals added</span>';
+
+} else {
+
+  goals.forEach(goal => {
+
+    const span = document.createElement("span");
+
+    span.className = "goal";
+
+    span.textContent = goal;
+
+    goalsContainer.appendChild(span);
+
+  });
+
+}
+
+
+// Display workout plan
+document.getElementById("plan").textContent =
+  viewedUser.plan ||
+  "No workout plan added.";
+
+
+// Like user
+async function likeUser() {
+
+  if (!currentUser) {
+
+    alert("Please login first.");
+
+    window.location.href = "login.html";
+
+    return;
+
+  }
+
+
+  if (currentUser._id === viewedUser._id) {
+
+    alert("You cannot like yourself.");
+
+    return;
+
+  }
+
+
+  try {
+
+    const response = await fetch(
+      "http://localhost:5000/api/users/like",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+          userId: currentUser._id,
+
+          targetId: viewedUser._id
+
+        })
+
+      }
+    );
+
+
+    const data = await response.json();
+
+
+    if (!response.ok) {
+
+      alert(data.message || "Unable to like user.");
+
+      return;
+
+    }
+
+
+    if (data.match) {
+
+      alert("🎉 It's a MATCH! ❤️");
+
+    } else {
+
+      alert("❤️ Liked successfully!");
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Cannot connect to server. Please make sure the backend is running."
+    );
+
+  }
+
+}
+
+
+// Open matches
+function openChat() {
+
+  window.location.href = "user1.html";
+
+}
+
+
+// Go back
+function goBack() {
+
+  window.location.href = "home.html";
+
+}
+
+</script>
+
+</body>
+</html>

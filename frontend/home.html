@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FitBuddy - Find Gym Partners</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      color: #222;
+    }
+
+    /* =========================================
+       HEADER
+    ========================================= */
+
+    header {
+      min-height: 70px;
+      padding: 15px 20px;
+      background: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 22px;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .header-btn {
+      border: none;
+      background: #111;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .header-btn:hover {
+      background: #333;
+    }
+
+    .logout-btn {
+      background: white;
+      color: #111;
+      border: 1px solid #ccc;
+    }
+
+    .logout-btn:hover {
+      background: #f2f2f2;
+    }
+
+    /* =========================================
+       SEARCH SECTION
+    ========================================= */
+
+    .search-section {
+      background: white;
+      padding: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .search-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    #search {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      outline: none;
+    }
+
+    #search:focus {
+      border-color: #111;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      border: 1px solid #ccc;
+      background: white;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .filter-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .filter-btn.active {
+      background: #111;
+      color: white;
+      border-color: #111;
+    }
+
+    /* =========================================
+       CONTENT
+    ========================================= */
+
+    .content {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .section-header h3 {
+      margin: 0;
+      color: #555;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+    }
+
+    .result-count {
+      font-size: 13px;
+      color: #888;
+    }
+
+    /* =========================================
+       USER CARD
+    ========================================= */
+
+    .card {
+      background: white;
+      margin-bottom: 15px;
+      padding: 18px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.10);
+    }
+
+    /* =========================================
+       AVATAR
+    ========================================= */
+
+    .avatar {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      background: #ff9f00;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 25px;
+      font-weight: bold;
+      margin-right: 16px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* =========================================
+       USER INFORMATION
+    ========================================= */
+
+    .info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .name {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .tag {
+      background: #eee;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 12px;
+      display: inline-block;
+    }
+
+    .desc {
+      margin-top: 7px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .plan {
+      margin-top: 4px;
+      color: #777;
+      font-size: 13px;
+    }
+
+    /* =========================================
+       LIKE BUTTON
+    ========================================= */
+
+    .likeBtn {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: 0.2s;
+    }
+
+    .likeBtn:hover {
+      transform: scale(1.1);
+      border-color: #ff4d6d;
+      background: #fff3f5;
+    }
+
+    /* =========================================
+       MESSAGE
+    ========================================= */
+
+    .message {
+      background: white;
+      padding: 35px 20px;
+      border-radius: 15px;
+      text-align: center;
+      color: #777;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .message-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .message-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #444;
+      margin-bottom: 8px;
+    }
+
+    .refresh-btn {
+      margin-top: 15px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      background: #111;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    @media (max-width: 700px) {
+
+      header {
+        padding: 12px;
+      }
+
+      .logo {
+        font-size: 18px;
+      }
+
+      .header-buttons {
+        gap: 5px;
+      }
+
+      .header-btn {
+        padding: 8px 9px;
+        font-size: 11px;
+      }
+
+      .content {
+        padding: 12px;
+      }
+
+      .search-section {
+        padding: 15px;
+      }
+
+      .card {
+        padding: 13px;
+      }
+
+      .avatar {
+        width: 55px;
+        height: 55px;
+        margin-right: 12px;
+      }
+
+      .name {
+        font-size: 16px;
+      }
+
+      .desc,
+      .plan {
+        font-size: 12px;
+      }
+
+      .likeBtn {
+        width: 45px;
+        height: 45px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================================
+       HEADER
+  ========================================= -->
+
+  <header>
+
+    <div class="logo">
+      💪 FitBuddy
+    </div>
+
+    <div class="header-buttons">
+
+      <!-- WORKOUTS -->
+      <button
+        class="header-btn"
+        onclick="openWorkouts()"
+      >
+        🏋️ Workouts
+      </button>
+
+      <!-- NEARBY GYMS -->
+      <button
+        class="header-btn"
+        onclick="openNearbyGyms()"
+      >
+        📍 Nearby Gyms
+      </button>
+
+      <!-- MATCHES -->
+      <button
+        class="header-btn"
+        onclick="openMatches()"
+      >
+        💬 Matches
+      </button>
+
+      <!-- LOGOUT -->
+      <button
+        class="header-btn logout-btn"
+        onclick="logout()"
+      >
+        🚪
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================================
+       SEARCH
+  ========================================= -->
+
+  <div class="search-section">
+
+    <div class="search-title">
+      Find your gym partner 💪
+    </div>
+
+    <input
+      id="search"
+      type="text"
+      placeholder="Search by name, goal, location..."
+    />
+
+    <div class="filter-row">
+
+      <button
+        class="filter-btn active"
+        data-filter="all"
+        onclick="setFilter('all', this)"
+      >
+        All
+      </button>
+
+      <button
+        class="filter-btn"
+        data-filter="goal"
+        onclick="setFilter('goal', this)"
+      >
+        🎯 Goal
+      </button>
+
+      <button
+        class="filter-btn"
+        data-filter="location"
+        onclick="setFilter('location', this)"
+      >
+        📍 Location
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================
+       CONTENT
+  ========================================= -->
+
+  <div class="content">
+
+    <div class="section-header">
+
+      <h3>
+        NEARBY PARTNERS
+      </h3>
+
+      <span
+        id="resultCount"
+        class="result-count"
+      >
+        Loading...
+      </span>
+
+    </div>
+
+    <div id="userList"></div>
+
+  </div>
+
+
+  <script>
+
+    // =====================================================
+    // CURRENT USER
+    // =====================================================
+
+    const currentUser =
+      JSON.parse(
+        localStorage.getItem("user")
+      );
+
+
+    if (!currentUser) {
+
+      window.location.href =
+        "login.html";
+
+    }
+
+
+    const senderId =
+      currentUser._id;
+
+
+    // =====================================================
+    // GLOBAL VARIABLES
+    // =====================================================
+
+    let allUsers = [];
+
+    let currentFilter = "all";
+
+
+    // =====================================================
+    // LOAD USERS
+    // =====================================================
+
+    async function loadUsers() {
+
+      try {
+
+        console.log(
+          "Current user:",
+          currentUser
+        );
+
+
+        const workoutType =
+          currentUser.workoutType ||
+          "Gym";
+
+
+        console.log(
+          "Workout type:",
+          workoutType
+        );
+
+
+        const res =
+          await fetch(
+            `http://localhost:5000/api/users/match/${encodeURIComponent(workoutType)}/${senderId}`
+          );
+
+
+        const data =
+          await res.json();
+
+
+        console.log(
+          "Matching response:",
+          data
+        );
+
+
+        if (!res.ok) {
+
+          showMessage(
+            "⚠️",
+            "Unable to load partners",
+            data.message ||
+            "Something went wrong."
+          );
+
+          return;
+
+        }
+
+
+        allUsers =
+          data.users || [];
+
+
+        renderUsers(
+          allUsers
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Load users error:",
+          error
+        );
+
+
+        showMessage(
+          "🔌",
+          "Server unavailable",
+          "Please make sure your backend is running."
+        );
+
+      }
+
+    }
+
+
+    // =====================================================
+    // RENDER USERS
+    // =====================================================
+
+    function renderUsers(
+      users
+    ) {
+
+      const container =
+        document.getElementById(
+          "userList"
+        );
+
+
+      container.innerHTML = "";
+
+
+      if (
+        !users ||
+        users.length === 0
+      ) {
+
+        showMessage(
+          "🔍",
+          "No gym partners found",
+          "Try changing your search or check back later."
+        );
+
+        return;
+
+      }
+
+
+      document.getElementById(
+        "resultCount"
+      ).textContent =
+        `${users.length} partner${users.length === 1 ? "" : "s"}`;
+
+
+      users.forEach(
+        user => {
+
+          createUserCard(
+            user,
+            container
+          );
+
+        }
+      );
+
+    }
+
+
+    // =====================================================
+    // CREATE USER CARD
+    // =====================================================
+
+    function createUserCard(
+      user,
+      container
+    ) {
+
+      const card =
+        document.createElement(
+          "div"
+        );
+
+
+      card.className =
+        "card";
+
+
+      // OPEN PROFILE
+
+      card.onclick = () => {
+
+        localStorage.setItem(
+          "viewUser",
+          JSON.stringify(user)
+        );
+
+
+        window.location.href =
+          "profile.html";
+
+      };
+
+
+      // AVATAR
+
+      const avatar =
+        document.createElement(
+          "div"
+        );
+
+
+      avatar.className =
+        "avatar";
+
+
+      if (user.picture) {
+
+        const img =
+          document.createElement(
+            "img"
+          );
+
+
+        img.src =
+          user.picture;
+
+
+        img.onerror =
+          function() {
+
+            this.remove();
+
+            avatar.textContent =
+              getInitial(
+                user.name
+              );
+
+          };
+
+
+        avatar.appendChild(
+          img
+        );
+
+      } else {
+
+        avatar.textContent =
+          getInitial(
+            user.name
+          );
+
+      }
+
+
+      // USER INFO
+
+      const info =
+        document.createElement(
+          "div"
+        );
+
+
+      info.className =
+        "info";
+
+
+      const goalsText =
+        Array.isArray(user.goals)
+          ? user.goals.join(", ")
+          : (
+              user.goals ||
+              "No goals"
+            );
+
+
+      info.innerHTML = `
+
+        <div class="name-row">
+
+          <span class="name">
+            ${escapeHTML(
+              user.name ||
+              "FitBuddy User"
+            )}
+          </span>
+
+          <span class="tag">
+            ${escapeHTML(
+              user.workoutType ||
+              "Gym"
+            )}
+          </span>
+
+        </div>
+
+
+        <div class="desc">
+
+          📍 ${escapeHTML(
+            user.location ||
+            "No location"
+          )}
+
+          <br>
+
+          🎯 ${escapeHTML(
+            goalsText
+          )}
+
+        </div>
+
+
+        <div class="plan">
+
+          💬 ${escapeHTML(
+            user.plan ||
+            "Looking for a gym partner 💪"
+          )}
+
+        </div>
+
+      `;
+
+
+      // LIKE BUTTON
+
+      const likeButton =
+        document.createElement(
+          "button"
+        );
+
+
+      likeButton.className =
+        "likeBtn";
+
+
+      likeButton.innerHTML =
+        "❤️";
+
+
+      likeButton.title =
+        "Like this partner";
+
+
+      likeButton.onclick =
+        function(event) {
+
+          likeUser(
+            event,
+            user._id
+          );
+
+        };
+
+
+      card.appendChild(
+        avatar
+      );
+
+
+      card.appendChild(
+        info
+      );
+
+
+      card.appendChild(
+        likeButton
+      );
+
+
+      container.appendChild(
+        card
+      );
+
+    }
+
+
+    // =====================================================
+    // GET INITIAL
+    // =====================================================
+
+    function getInitial(
+      name
+    ) {
+
+      if (!name) {
+        return "U";
+      }
+
+
+      return name
+        .charAt(0)
+        .toUpperCase();
+
+    }
+
+
+    // =====================================================
+    // LIKE USER
+    // =====================================================
+
+    async function likeUser(
+      event,
+      userId
+    ) {
+
+      event.stopPropagation();
+
+
+      console.log(
+        "❤️ Like clicked"
+      );
+
+
+      try {
+
+        const res =
+          await fetch(
+            "http://localhost:5000/api/users/like",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+
+                fromUserId:
+                  senderId,
+
+                toUserId:
+                  userId
+
+              })
+
+            }
+          );
+
+
+        const data =
+          await res.json();
+
+
+        console.log(
+          "Like response:",
+          data
+        );
+
+
+        if (!res.ok) {
+
+          alert(
+            data.message ||
+            "Like failed"
+          );
+
+          return;
+
+        }
+
+
+        if (data.match) {
+
+          alert(
+            "🎉 It's a MATCH! ❤️"
+          );
+
+        } else {
+
+          alert(
+            "Liked ❤️"
+          );
+
+        }
+
+
+      } catch (error) {
+
+        console.error(
+          "Like error:",
+          error
+        );
+
+
+        alert(
+          "Cannot connect to server."
+        );
+
+      }
+
+    }
+
+
+    // =====================================================
+    // SEARCH
+    // =====================================================
+
+    document
+      .getElementById("search")
+      .addEventListener(
+        "input",
+        function() {
+
+          const searchText =
+            this.value
+              .toLowerCase()
+              .trim();
+
+
+          let filteredUsers =
+            allUsers.filter(
+              user => {
+
+                const name =
+                  (
+                    user.name ||
+                    ""
+                  ).toLowerCase();
+
+
+                const location =
+                  (
+                    user.location ||
+                    ""
+                  ).toLowerCase();
+
+
+                const workout =
+                  (
+                    user.workoutType ||
+                    ""
+                  ).toLowerCase();
+
+
+                const goals =
+                  Array.isArray(
+                    user.goals
+                  )
+                    ? user.goals
+                        .join(" ")
+                        .toLowerCase()
+                    : (
+                        user.goals ||
+                        ""
+                      ).toLowerCase();
+
+
+                const plan =
+                  (
+                    user.plan ||
+                    ""
+                  ).toLowerCase();
+
+
+                if (
+                  currentFilter ===
+                  "goal"
+                ) {
+
+                  return goals.includes(
+                    searchText
+                  );
+
+                }
+
+
+                if (
+                  currentFilter ===
+                  "location"
+                ) {
+
+                  return location.includes(
+                    searchText
+                  );
+
+                }
+
+
+                return (
+                  name.includes(
+                    searchText
+                  ) ||
+                  location.includes(
+                    searchText
+                  ) ||
+                  workout.includes(
+                    searchText
+                  ) ||
+                  goals.includes(
+                    searchText
+                  ) ||
+                  plan.includes(
+                    searchText
+                  )
+                );
+
+              }
+            );
+
+
+          renderUsers(
+            filteredUsers
+          );
+
+        }
+      );
+
+
+    // =====================================================
+    // FILTER
+    // =====================================================
+
+    function setFilter(
+      filter,
+      button
+    ) {
+
+      currentFilter =
+        filter;
+
+
+      document
+        .querySelectorAll(
+          ".filter-btn"
+        )
+        .forEach(
+          btn => {
+
+            btn.classList.remove(
+              "active"
+            );
+
+          }
+        );
+
+
+      button.classList.add(
+        "active"
+      );
+
+
+      const search =
+        document.getElementById(
+          "search"
+        );
+
+
+      search.value = "";
+
+
+      if (filter === "all") {
+
+        search.placeholder =
+          "Search by name, goal, location...";
+
+        renderUsers(
+          allUsers
+        );
+
+        return;
+
+      }
+
+
+      if (filter === "goal") {
+
+        search.placeholder =
+          "Type a goal, e.g. Muscle Gain...";
+
+      } else {
+
+        search.placeholder =
+          "Type a location, e.g. Bengaluru...";
+
+      }
+
+    }
+
+
+    // =====================================================
+    // SHOW MESSAGE
+    // =====================================================
+
+    function showMessage(
+      icon,
+      title,
+      description
+    ) {
+
+      document.getElementById(
+        "resultCount"
+      ).textContent =
+        "";
+
+
+      document.getElementById(
+        "userList"
+      ).innerHTML = `
+
+        <div class="message">
+
+          <div class="message-icon">
+            ${icon}
+          </div>
+
+          <div class="message-title">
+            ${title}
+          </div>
+
+          <div>
+            ${description}
+          </div>
+
+          <button
+            class="refresh-btn"
+            onclick="loadUsers()"
+          >
+            🔄 Refresh
+          </button>
+
+        </div>
+
+      `;
+
+    }
+
+
+    // =====================================================
+    // ESCAPE HTML
+    // =====================================================
+
+    function escapeHTML(
+      value
+    ) {
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.textContent =
+        value;
+
+
+      return div.innerHTML;
+
+    }
+
+
+    // =====================================================
+    // OPEN WORKOUTS
+    // =====================================================
+
+    function openWorkouts() {
+
+      window.location.href =
+        "workouts.html";
+
+    }
+
+
+    // =====================================================
+    // OPEN NEARBY GYMS
+    // =====================================================
+
+    function openNearbyGyms() {
+
+      window.location.href =
+        "nearby.html";
+
+    }
+
+
+    // =====================================================
+    // OPEN MATCHES
+    // =====================================================
+
+    function openMatches() {
+
+      window.location.href =
+        "user1.html";
+
+    }
+
+
+    // =====================================================
+    // LOGOUT
+    // =====================================================
+
+    function logout() {
+
+      localStorage.removeItem(
+        "user"
+      );
+
+      localStorage.removeItem(
+        "profile1"
+      );
+
+      localStorage.removeItem(
+        "goals"
+      );
+
+      localStorage.removeItem(
+        "viewUser"
+      );
+
+
+      window.location.href =
+        "login.html";
+
+    }
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    loadUsers();
+
+  </script>
+
+</body>
+</html>

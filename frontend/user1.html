@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FitBuddy - Chat</title>
+
+  <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* =========================================
+       HEADER
+    ========================================= */
+
+    .header {
+      height: 70px;
+      background: white;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .header h2 {
+      margin: 0;
+      font-size: 25px;
+    }
+
+    .back-button {
+      position: absolute;
+      left: 15px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      background: #111;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .back-button:hover {
+      background: #333;
+    }
+
+    /* =========================================
+       MAIN LAYOUT
+    ========================================= */
+
+    .container {
+      display: flex;
+      height: calc(100vh - 70px);
+    }
+
+    /* =========================================
+       MATCH LIST
+    ========================================= */
+
+    .users {
+      width: 30%;
+      min-width: 280px;
+      background: white;
+      border-right: 1px solid #ddd;
+      overflow-y: auto;
+    }
+
+    .users-header {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .users-header h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .user-card {
+      padding: 16px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: 0.2s;
+    }
+
+    .user-card:hover {
+      background: #f5f5f5;
+    }
+
+    .user-card.active {
+      background: #eef2ff;
+    }
+
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #ff9f00;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      font-weight: bold;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-info {
+      min-width: 0;
+    }
+
+    .user-name {
+      font-size: 16px;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-workout {
+      color: #777;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .user-location {
+      color: #999;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    /* =========================================
+       CHAT
+    ========================================= */
+
+    .chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .chat-header {
+      height: 70px;
+      background: white;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      gap: 12px;
+    }
+
+    .chat-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #ff9f00;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .chat-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .chat-user-name {
+      font-weight: bold;
+      font-size: 17px;
+    }
+
+    .chat-user-status {
+      color: #777;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    /* =========================================
+       MESSAGES
+    ========================================= */
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 25px;
+      margin: 0;
+      list-style: none;
+      background: #f5f7fa;
+    }
+
+    .message-row {
+      display: flex;
+      margin-bottom: 14px;
+      width: 100%;
+    }
+
+    .message-row.mine {
+      justify-content: flex-end;
+    }
+
+    .message-row.other {
+      justify-content: flex-start;
+    }
+
+    .message-bubble {
+      max-width: 65%;
+      padding: 11px 14px;
+      border-radius: 16px;
+      position: relative;
+      word-wrap: break-word;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .message-row.mine .message-bubble {
+      background: #111;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message-row.other .message-bubble {
+      background: white;
+      color: #222;
+      border: 1px solid #e5e5e5;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-time {
+      display: block;
+      font-size: 10px;
+      margin-top: 5px;
+      text-align: right;
+      opacity: 0.6;
+    }
+
+    /* =========================================
+       START CHAT MESSAGE
+    ========================================= */
+
+    .welcome {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #777;
+    }
+
+    .welcome-icon {
+      font-size: 45px;
+      margin-bottom: 10px;
+    }
+
+    .welcome h3 {
+      margin: 0 0 8px;
+      color: #555;
+    }
+
+    .welcome p {
+      margin: 0;
+    }
+
+    /* =========================================
+       MESSAGE INPUT
+    ========================================= */
+
+    .message-box {
+      display: flex;
+      gap: 10px;
+      padding: 15px;
+      background: white;
+      border-top: 1px solid #ddd;
+    }
+
+    #messageInput {
+      flex: 1;
+      padding: 13px 15px;
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    #messageInput:focus {
+      border-color: #111;
+    }
+
+    .send-button {
+      width: 90px;
+      border: none;
+      border-radius: 25px;
+      background: #111;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .send-button:hover {
+      background: #333;
+    }
+
+    .send-button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    /* =========================================
+       EMPTY
+    ========================================= */
+
+    .empty {
+      padding: 30px 20px;
+      text-align: center;
+      color: #777;
+      line-height: 1.5;
+    }
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    @media (max-width: 700px) {
+
+      body {
+        overflow: auto;
+      }
+
+      .container {
+        height: calc(100vh - 70px);
+      }
+
+      .users {
+        width: 35%;
+        min-width: 120px;
+      }
+
+      .user-card {
+        padding: 10px;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+
+      .user-name {
+        font-size: 13px;
+      }
+
+      .user-workout,
+      .user-location {
+        font-size: 10px;
+      }
+
+      .message-bubble {
+        max-width: 80%;
+      }
+
+      .chat-header {
+        padding: 8px;
+      }
+
+      .chat-user-name {
+        font-size: 14px;
+      }
+
+      #messages {
+        padding: 15px;
+      }
+
+      .back-button {
+        left: 8px;
+        padding: 8px 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================================
+       HEADER
+  ========================================== -->
+
+  <div class="header">
+
+    <button
+      class="back-button"
+      onclick="goHome()"
+    >
+      ← Home
+    </button>
+
+    <h2>
+      FitBuddy 💪
+    </h2>
+
+  </div>
+
+
+  <!-- =========================================
+       MAIN
+  ========================================== -->
+
+  <div class="container">
+
+    <!-- =======================================
+         MATCH LIST
+    ======================================== -->
+
+    <div class="users">
+
+      <div class="users-header">
+
+        <h3>
+          My Matches ❤️
+        </h3>
+
+      </div>
+
+      <div id="usersList">
+
+        <div class="empty">
+          Loading your matches...
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =======================================
+         CHAT AREA
+    ======================================== -->
+
+    <div class="chat">
+
+      <div class="chat-header">
+
+        <div
+          class="chat-avatar"
+          id="chatAvatar"
+        >
+          💪
+        </div>
+
+        <div>
+
+          <div
+            class="chat-user-name"
+            id="chatUserName"
+          >
+            Select a gym partner
+          </div>
+
+          <div
+            class="chat-user-status"
+            id="chatUserStatus"
+          >
+            Choose a match to start chatting
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================
+           MESSAGES
+      ====================================== -->
+
+      <ul id="messages">
+
+        <div class="welcome">
+
+          <div>
+
+            <div class="welcome-icon">
+              💬
+            </div>
+
+            <h3>
+              Start the conversation
+            </h3>
+
+            <p>
+              Select a matched gym partner.
+            </p>
+
+          </div>
+
+        </div>
+
+      </ul>
+
+
+      <!-- =====================================
+           INPUT
+      ====================================== -->
+
+      <div class="message-box">
+
+        <input
+          id="messageInput"
+          placeholder="Type a message..."
+          disabled
+        />
+
+        <button
+          class="send-button"
+          id="sendButton"
+          onclick="sendMessage()"
+          disabled
+        >
+          Send
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    // =====================================================
+    // CHECK LOGIN
+    // =====================================================
+
+    const currentUser =
+      JSON.parse(localStorage.getItem("user"));
+
+    if (!currentUser) {
+
+      alert("Please login first");
+
+      window.location.href =
+        "login.html";
+
+    }
+
+
+    const senderId =
+      currentUser._id;
+
+
+    let receiverId = null;
+    let receiverUser = null;
+    let room = null;
+
+
+    // =====================================================
+    // SOCKET.IO
+    // =====================================================
+
+    const socket =
+      io("http://localhost:5000");
+
+
+    // =====================================================
+    // GET PROFILE PICTURE
+    // =====================================================
+
+    function getInitial(
+      name
+    ) {
+
+      if (!name) {
+        return "U";
+      }
+
+      return name
+        .charAt(0)
+        .toUpperCase();
+
+    }
+
+
+    // =====================================================
+    // CREATE AVATAR
+    // =====================================================
+
+    function createAvatar(
+      user,
+      className
+    ) {
+
+      const avatar =
+        document.createElement("div");
+
+      avatar.className =
+        className;
+
+
+      if (user.picture) {
+
+        const img =
+          document.createElement("img");
+
+        img.src =
+          user.picture;
+
+        img.onerror = function() {
+
+          this.remove();
+
+          avatar.textContent =
+            getInitial(user.name);
+
+        };
+
+        avatar.appendChild(img);
+
+      } else {
+
+        avatar.textContent =
+          getInitial(user.name);
+
+      }
+
+
+      return avatar;
+
+    }
+
+
+    // =====================================================
+    // LOAD MATCHES
+    // =====================================================
+
+    async function loadMatches() {
+
+      try {
+
+        const res =
+          await fetch(
+            `http://localhost:5000/api/users/matches/${senderId}`
+          );
+
+
+        const data =
+          await res.json();
+
+
+        console.log(
+          "Matches:",
+          data
+        );
+
+
+        const usersList =
+          document.getElementById(
+            "usersList"
+          );
+
+
+        usersList.innerHTML = "";
+
+
+        if (
+          !data.matches ||
+          data.matches.length === 0
+        ) {
+
+          usersList.innerHTML = `
+
+            <div class="empty">
+
+              ❤️<br><br>
+
+              <b>No matches yet</b>
+
+              <br><br>
+
+              Like gym partners to
+              start chatting.
+
+            </div>
+
+          `;
+
+          return;
+
+        }
+
+
+        data.matches.forEach(
+          match => {
+
+            if (
+              !match.users ||
+              match.users.length < 2
+            ) {
+              return;
+            }
+
+
+            const otherUser =
+              match.users.find(
+                user =>
+                  user._id !== senderId
+              );
+
+
+            if (!otherUser) {
+              return;
+            }
+
+
+            const card =
+              document.createElement("div");
+
+            card.className =
+              "user-card";
+
+
+            const avatar =
+              createAvatar(
+                otherUser,
+                "avatar"
+              );
+
+
+            const info =
+              document.createElement("div");
+
+            info.className =
+              "user-info";
+
+
+            info.innerHTML = `
+
+              <div class="user-name">
+                ${otherUser.name || "FitBuddy User"}
+              </div>
+
+              <div class="user-workout">
+                💪 ${otherUser.workoutType || "Gym"}
+              </div>
+
+              <div class="user-location">
+                📍 ${otherUser.location || "No location"}
+              </div>
+
+            `;
+
+
+            card.appendChild(
+              avatar
+            );
+
+            card.appendChild(
+              info
+            );
+
+
+            card.onclick =
+              () => {
+
+                selectUser(
+                  otherUser,
+                  card
+                );
+
+              };
+
+
+            usersList.appendChild(
+              card
+            );
+
+          }
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Load matches error:",
+          error
+        );
+
+
+        document.getElementById(
+          "usersList"
+        ).innerHTML = `
+
+          <div class="empty">
+            Cannot connect to server.
+          </div>
+
+        `;
+
+      }
+
+    }
+
+
+    // =====================================================
+    // SELECT USER
+    // =====================================================
+
+    function selectUser(
+      user,
+      selectedCard
+    ) {
+
+      receiverUser =
+        user;
+
+      receiverId =
+        user._id;
+
+
+      room =
+        [
+          senderId,
+          receiverId
+        ]
+        .sort()
+        .join("_");
+
+
+      console.log(
+        "Chat room:",
+        room
+      );
+
+
+      // Highlight selected card
+      document
+        .querySelectorAll(
+          ".user-card"
+        )
+        .forEach(
+          card => {
+
+            card.classList.remove(
+              "active"
+            );
+
+          }
+        );
+
+
+      selectedCard.classList.add(
+        "active"
+      );
+
+
+      // Join room
+      socket.emit(
+        "join_room",
+        room
+      );
+
+
+      // Update chat header
+      const chatAvatar =
+        document.getElementById(
+          "chatAvatar"
+        );
+
+
+      chatAvatar.innerHTML = "";
+
+
+      if (user.picture) {
+
+        const img =
+          document.createElement(
+            "img"
+          );
+
+        img.src =
+          user.picture;
+
+        img.onerror =
+          function() {
+
+            chatAvatar.textContent =
+              getInitial(user.name);
+
+          };
+
+        chatAvatar.appendChild(
+          img
+        );
+
+      } else {
+
+        chatAvatar.textContent =
+          getInitial(user.name);
+
+      }
+
+
+      document.getElementById(
+        "chatUserName"
+      ).textContent =
+        user.name ||
+        "FitBuddy User";
+
+
+      document.getElementById(
+        "chatUserStatus"
+      ).textContent =
+        "💪 " +
+        (user.workoutType ||
+        "Gym Partner");
+
+
+      // Enable message controls
+      document.getElementById(
+        "messageInput"
+      ).disabled = false;
+
+
+      document.getElementById(
+        "sendButton"
+      ).disabled = false;
+
+
+      // Clear current messages
+      document.getElementById(
+        "messages"
+      ).innerHTML = "";
+
+
+      // Load chat history
+      loadMessages();
+
+    }
+
+
+    // =====================================================
+    // FORMAT TIME
+    // =====================================================
+
+    function formatTime(
+      date
+    ) {
+
+      const d =
+        new Date(date);
+
+
+      if (
+        isNaN(
+          d.getTime()
+        )
+      ) {
+
+        return "";
+
+      }
+
+
+      return d.toLocaleTimeString(
+        [],
+        {
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      );
+
+    }
+
+
+    // =====================================================
+    // LOAD OLD MESSAGES
+    // =====================================================
+
+    async function loadMessages() {
+
+      if (!receiverId) {
+        return;
+      }
+
+
+      try {
+
+        const res =
+          await fetch(
+            `http://localhost:5000/api/users/messages/${senderId}/${receiverId}`
+          );
+
+
+        const data =
+          await res.json();
+
+
+        const messages =
+          document.getElementById(
+            "messages"
+          );
+
+
+        messages.innerHTML = "";
+
+
+        if (
+          !data.messages ||
+          data.messages.length === 0
+        ) {
+
+          messages.innerHTML = `
+
+            <div class="welcome">
+
+              <div>
+
+                <div class="welcome-icon">
+                  👋
+                </div>
+
+                <h3>
+                  Start the conversation
+                </h3>
+
+                <p>
+                  Say hello to your gym partner!
+                </p>
+
+              </div>
+
+            </div>
+
+          `;
+
+          return;
+
+        }
+
+
+        data.messages.forEach(
+          message => {
+
+            addMessageToScreen(
+              message.text,
+              message.sender === senderId,
+              message.createdAt
+            );
+
+          }
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Message loading error:",
+          error
+        );
+
+      }
+
+    }
+
+
+    // =====================================================
+    // ADD MESSAGE TO SCREEN
+    // =====================================================
+
+    function addMessageToScreen(
+      text,
+      isMine,
+      timestamp
+    ) {
+
+      const messages =
+        document.getElementById(
+          "messages"
+        );
+
+
+      // Remove welcome message
+      const welcome =
+        messages.querySelector(
+          ".welcome"
+        );
+
+      if (welcome) {
+        welcome.remove();
+      }
+
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+
+      row.className =
+        "message-row " +
+        (
+          isMine
+            ? "mine"
+            : "other"
+        );
+
+
+      const bubble =
+        document.createElement(
+          "div"
+        );
+
+
+      bubble.className =
+        "message-bubble";
+
+
+      bubble.textContent =
+        text;
+
+
+      const time =
+        document.createElement(
+          "span"
+        );
+
+
+      time.className =
+        "message-time";
+
+
+      time.textContent =
+        formatTime(
+          timestamp ||
+          new Date()
+        );
+
+
+      bubble.appendChild(
+        time
+      );
+
+
+      row.appendChild(
+        bubble
+      );
+
+
+      messages.appendChild(
+        row
+      );
+
+
+      // Auto scroll
+      messages.scrollTop =
+        messages.scrollHeight;
+
+    }
+
+
+    // =====================================================
+    // RECEIVE REAL-TIME MESSAGE
+    // =====================================================
+
+    socket.on(
+      "receive_message",
+      data => {
+
+        if (
+          !receiverId ||
+          data.room !== room
+        ) {
+
+          return;
+
+        }
+
+
+        // Show message
+        addMessageToScreen(
+          data.text,
+          data.sender === senderId,
+          new Date()
+        );
+
+      }
+    );
+
+
+    // =====================================================
+    // SEND MESSAGE
+    // =====================================================
+
+    async function sendMessage() {
+
+      if (!receiverId) {
+
+        alert(
+          "Please select a matched gym partner first."
+        );
+
+        return;
+
+      }
+
+
+      const input =
+        document.getElementById(
+          "messageInput"
+        );
+
+
+      const message =
+        input.value.trim();
+
+
+      if (!message) {
+        return;
+      }
+
+
+      try {
+
+        const res =
+          await fetch(
+            "http://localhost:5000/api/users/message",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+
+                senderId:
+                  senderId,
+
+                receiverId:
+                  receiverId,
+
+                text:
+                  message
+
+              })
+
+            }
+          );
+
+
+        const data =
+          await res.json();
+
+
+        console.log(
+          "Message response:",
+          data
+        );
+
+
+        if (!res.ok) {
+
+          alert(
+            data.message ||
+            "Message could not be sent"
+          );
+
+          return;
+
+        }
+
+
+        // Socket.IO sends it to both users
+        socket.emit(
+          "send_message",
+          {
+
+            room:
+              room,
+
+            sender:
+              senderId,
+
+            text:
+              message
+
+          }
+        );
+
+
+        input.value = "";
+
+        input.focus();
+
+
+      } catch (error) {
+
+        console.error(
+          "Send message error:",
+          error
+        );
+
+
+        alert(
+          "Unable to send message."
+        );
+
+      }
+
+    }
+
+
+    // =====================================================
+    // ENTER KEY
+    // =====================================================
+
+    document
+      .getElementById(
+        "messageInput"
+      )
+      .addEventListener(
+        "keydown",
+        function(event) {
+
+          if (
+            event.key === "Enter"
+          ) {
+
+            event.preventDefault();
+
+            sendMessage();
+
+          }
+
+        }
+      );
+
+
+    // =====================================================
+    // GO HOME
+    // =====================================================
+
+    function goHome() {
+
+      window.location.href =
+        "home.html";
+
+    }
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    loadMatches();
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>About You</title>
+
+<style>
+body {
+  font-family: Arial;
+  padding: 20px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h2>About You</h2>
+<p>Tell us about yourself</p>
+
+<input id="age" type="number" placeholder="Age">
+
+<select id="gender">
+  <option value="">Select Gender</option>
+  <option value="Male">Male</option>
+  <option value="Female">Female</option>
+  <option value="Prefer not to say">Prefer not to say</option>
+</select>
+
+<input id="location" placeholder="Gym Location">
+
+<select id="workoutType">
+  <option value="">Select Workout Type</option>
+  <option value="Gym">Gym</option>
+  <option value="Running">Running</option>
+  <option value="Yoga">Yoga</option>
+  <option value="Crossfit">Crossfit</option>
+  <option value="Home Workout">Home Workout</option>
+</select>
+
+<button onclick="next()">Continue</button>
+
+<script>
+function next() {
+
+  const data = {
+    age: document.getElementById("age").value,
+    gender: document.getElementById("gender").value,
+    location: document.getElementById("location").value,
+    workoutType: document.getElementById("workoutType").value
+  };
+
+  if (!data.age || !data.gender || !data.location || !data.workoutType) {
+    alert("Please fill all the details");
+    return;
+  }
+
+  localStorage.setItem("profile1", JSON.stringify(data));
+
+  window.location.href = "goals.html";
+}
+</script>
+
+</body>
+</html>

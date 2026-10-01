@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FitBuddy Tinder UI</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial;
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    }
+
+    /* 🔥 FIXED CARD (NO BLUR ISSUE) */
+    .card {
+      width: 320px;
+      height: 460px;
+      border-radius: 20px;
+      background: white; /* ✅ FIX */
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      position: absolute;
+      text-align: center;
+      padding: 15px;
+      transition: transform 0.3s ease;
+    }
+
+    img {
+      width: 100%;
+      height: 260px;
+      border-radius: 15px;
+      object-fit: cover;
+    }
+
+    /* 🔥 FIX TEXT COLORS */
+    h2 { color: #222; margin: 10px 0 5px; }
+    p { color: #555; }
+
+    #popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      display: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    #popup button {
+      padding: 10px 20px;
+      background: green;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 🎉 MATCH POPUP -->
+  <div id="popup">
+    <h2>🎉 It's a Match!</h2>
+    <button onclick="goChat()">Go to Chat 💬</button>
+  </div>
+
+  <!-- 🃏 CARDS -->
+  <div id="card1" class="card"></div>
+  <div id="card2" class="card"></div>
+  <div id="card3" class="card"></div>
+
+  <script>
+    const currentUser = JSON.parse(localStorage.getItem("user"));
+    const senderId = currentUser._id;
+
+    let users = [];
+    let index = 0;
+
+    const cards = [
+      document.getElementById("card1"),
+      document.getElementById("card2"),
+      document.getElementById("card3")
+    ];
+
+    async function loadUsers() {
+      const res = await fetch(`http://localhost:5000/api/users/matches/${senderId}`);
+      const data = await res.json();
+
+      users = data.matches.flatMap(match =>
+      match.users.filter(u => u._id !== senderId)
+      );
+
+      renderCards();
+    }
+
+    function renderCards() {
+  for (let i = 0; i < 3; i++) {
+    const card = cards[i];
+
+    if (users[index + i]) {
+      const user = users[index + i];
+
+      card.style.display = "block"; // ✅ important
+
+      card.innerHTML = `
+        <img src="${user.profilePic || 'https://i.pravatar.cc/300'}">
+        <h2>${user.name || "No Name"}</h2>
+        <p>${user.workoutType || "Gym"}</p>
+      `;
+
+      card.style.transform = `scale(${1 - i * 0.05}) translateY(${i * 10}px)`;
+    } else {
+      card.style.display = "none"; // ✅ hide empty cards
+    }
+  }
+}
+
+    async function likeUser(userId) {
+      const res = await fetch("http://localhost:5000/api/users/like", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          fromUserId: senderId,
+          toUserId: userId
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.match) {
+        document.getElementById("popup").style.display = "block";
+      }
+    }
+
+    function swipe(direction) {
+      const user = users[index];
+
+      if (!user) return;
+
+      if (direction === "right") {
+        likeUser(user._id);
+        cards[0].style.transform = "translateX(500px)";
+      } else {
+        cards[0].style.transform = "translateX(-500px)";
+      }
+
+      setTimeout(() => {
+        index++;
+        renderCards();
+      }, 300);
+    }
+
+    // 🖱️ DRAG
+    let startX = 0;
+    let dragging = false;
+
+    cards[0].addEventListener("mousedown", (e) => {
+      dragging = true;
+      startX = e.clientX;
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!dragging) return;
+
+      const delta = e.clientX - startX;
+      cards[0].style.transform = `translateX(${delta}px) rotate(${delta/10}deg)`;
+    });
+
+    document.addEventListener("mouseup", (e) => {
+      if (!dragging) return;
+
+      dragging = false;
+
+      const delta = e.clientX - startX;
+
+      if (delta > 100) swipe("right");
+      else if (delta < -100) swipe("left");
+      else cards[0].style.transform = "translateX(0)";
+    });
+
+    function goChat() {
+      window.location.href = "chat.html";
+    }
+
+    loadUsers();
+  </script>
+
+</body>
+</html>

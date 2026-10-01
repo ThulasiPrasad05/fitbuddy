@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - FitBuddy</title>
+
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 150px;
+      background: #f5f7fa;
+    }
+
+    .login-box {
+      background: white;
+      width: 350px;
+      margin: auto;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    #googleButton {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    #message {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-box">
+
+    <h2>Welcome to FitBuddy 💪</h2>
+
+    <p>Find your perfect gym partner</p>
+
+    <div id="googleButton"></div>
+
+    <p id="message"></p>
+
+  </div>
+
+
+  <script>
+
+    // =====================================================
+    // GOOGLE LOGIN
+    // =====================================================
+
+    window.onload = function () {
+
+      google.accounts.id.initialize({
+
+        client_id:
+          "1037151065604-ndngc00d5o3sunn8nqjo7u254k09hjnk.apps.googleusercontent.com",
+
+        callback: handleGoogleLogin
+
+      });
+
+
+      google.accounts.id.renderButton(
+
+        document.getElementById("googleButton"),
+
+        {
+          theme: "outline",
+          size: "large",
+          text: "continue_with",
+          shape: "rectangular",
+          width: 300
+        }
+
+      );
+
+    };
+
+
+    // =====================================================
+    // GOOGLE LOGIN CALLBACK
+    // =====================================================
+
+    async function handleGoogleLogin(response) {
+
+      console.log("Google login response received");
+
+      const message =
+        document.getElementById("message");
+
+      try {
+
+        const res = await fetch(
+          "http://localhost:5000/api/users/google-login",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+              credential: response.credential
+            })
+          }
+        );
+
+
+        const data = await res.json();
+
+
+        if (res.ok) {
+
+          console.log("Google login successful");
+
+          // Save logged-in user
+          localStorage.setItem(
+            "user",
+            JSON.stringify(data.user)
+          );
+
+
+          message.style.color = "green";
+
+          message.textContent =
+            "Login successful!";
+
+
+          // Go to onboarding
+          setTimeout(() => {
+
+            window.location.href =
+              "about.html";
+
+          }, 1000);
+
+
+        } else {
+
+          message.style.color = "red";
+
+          message.textContent =
+            data.message ||
+            "Google login failed";
+
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        message.style.color = "red";
+
+        message.textContent =
+          "Unable to connect to server";
+
+      }
+
+    }
+
+  </script>
+
+</body>
+</html>
