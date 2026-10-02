@@ -46,12 +46,12 @@ console.log(
 
 
 // =====================================================
-// MONGODB
+// MONGODB ATLAS
 // =====================================================
 
-mongoose.connect("mongodb://127.0.0.1:27017/gymfinder")
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("MongoDB Connected");
+    console.log("MongoDB Connected ✅");
   })
   .catch(err => {
     console.log("MongoDB connection error:", err);
@@ -104,10 +104,12 @@ io.on("connection", (socket) => {
 // START SERVER
 // =====================================================
 
-server.listen(5000, () => {
+const PORT = process.env.PORT || 5000;
+
+server.listen(PORT, "0.0.0.0", () => {
 
   console.log(
-    "Server running on port 5000 🚀"
+    `Server running on port ${PORT} 🚀`
   );
 
 });
