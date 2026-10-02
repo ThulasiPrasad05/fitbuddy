@@ -82,7 +82,7 @@ async function finish() {
   try {
 
     const response = await fetch(
-      `http://localhost:5000/api/users/onboarding/${currentUser._id}`,
+      `https://fitbuddy-mgk6.onrender.com/api/users/onboarding/${currentUser._id}`,
       {
         method: "PUT",
         headers: {

@@ -1,7 +1,7 @@
-<script src="http://localhost:5000/socket.io/socket.io.js"></script>
+<script src="https://fitbuddy-mgk6.onrender.com/socket.io/socket.io.js"></script>
 
 <script>
-  const socket = io("http://localhost:5000");
+  const socket = io("https://fitbuddy-mgk6.onrender.com");
 
   // ✅ GET LOGGED-IN USER
   const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -24,7 +24,7 @@
 
   // ✅ LOAD OLD MESSAGES (FIXED)
   async function loadMessages() {
-    const res = await fetch(`http://localhost:5000/api/users/messages/${senderId}/${receiverId}`);
+    const res = await fetch(`https://fitbuddy-mgk6.onrender.com/api/users/messages/${senderId}/${receiverId}`);
     const data = await res.json();
 
     // 🔥 FIX: use data.messages
@@ -52,7 +52,7 @@
     if (!message.trim()) return;
 
     // 💾 SAVE TO DATABASE
-    await fetch("http://localhost:5000/api/users/message", {
+    await fetch("https://fitbuddy-mgk6.onrender.com/api/users/message", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

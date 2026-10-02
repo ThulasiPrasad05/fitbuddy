@@ -89,7 +89,7 @@
     ];
 
     async function loadUsers() {
-      const res = await fetch(`http://localhost:5000/api/users/matches/${senderId}`);
+      const res = await fetch(`https://fitbuddy-mgk6.onrender.com/api/users/matches/${senderId}`);
       const data = await res.json();
 
       users = data.matches.flatMap(match =>
@@ -122,7 +122,7 @@
 }
 
     async function likeUser(userId) {
-      const res = await fetch("http://localhost:5000/api/users/like", {
+      const res = await fetch("https://fitbuddy-mgk6.onrender.com/api/users/like", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({

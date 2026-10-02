@@ -3,7 +3,7 @@
 <head>
   <title>FitBuddy - Chat</title>
 
-  <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+  <script src="https://fitbuddy-mgk6.onrender.com/socket.io/socket.io.js"></script>
 
   <style>
     * {
@@ -581,7 +581,7 @@
     // =====================================================
 
     const socket =
-      io("http://localhost:5000");
+      io("https://fitbuddy-mgk6.onrender.com");
 
 
     // =====================================================
@@ -661,7 +661,7 @@
 
         const res =
           await fetch(
-            `http://localhost:5000/api/users/matches/${senderId}`
+            `https://fitbuddy-mgk6.onrender.com/api/users/matches/${senderId}`
           );
 
 
@@ -1009,7 +1009,7 @@
 
         const res =
           await fetch(
-            `http://localhost:5000/api/users/messages/${senderId}/${receiverId}`
+            `https://fitbuddy-mgk6.onrender.com/api/users/messages/${senderId}/${receiverId}`
           );
 
 
@@ -1245,7 +1245,7 @@
 
         const res =
           await fetch(
-            "http://localhost:5000/api/users/message",
+            "https://fitbuddy-mgk6.onrender.com/api/users/message",
             {
               method: "POST",
 
