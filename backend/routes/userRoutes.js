@@ -66,57 +66,112 @@ router.post("/google-login", async (req, res) => {
       user = await User.create({
         name: name || "FitBuddy User",
         email: email,
-        picture: picture || null
+        picture: picture || null,
+        onboardingCompleted: false
       });
 
       console.log("🆕 New Google user created:", email);
 
-    } else {
-
-      // ==================================================
-      // EXISTING GOOGLE USER
-      // ==================================================
-
-      console.log("👤 Existing Google user:", email);
-
-      // Update Google profile picture if available
-      if (picture && !user.picture) {
-        user.picture = picture;
-        await user.save();
-      }
+      return res.status(200).json({
+        message: "Google login successful",
+        isNewUser: true,
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          workoutType: user.workoutType,
+          age: user.age,
+          gender: user.gender,
+          location: user.location,
+          goals: user.goals,
+          plan: user.plan,
+          picture: user.picture || picture || null,
+          onboardingCompleted: false
+        }
+      });
     }
 
     // ==================================================
-    // CHECK ONBOARDING STATUS
+    // EXISTING GOOGLE USER
     // ==================================================
+
+    console.log("👤 Existing Google user:", email);
+
+    // Update picture if Google provides one
+    if (picture && !user.picture) {
+      user.picture = picture;
+    }
+
+    // ==================================================
+    // CHECK WHETHER ONBOARDING IS COMPLETE
+    // ==================================================
+
+    const hasGoals =
+      (Array.isArray(user.goals) && user.goals.length > 0) ||
+      (typeof user.goals === "string" &&
+        user.goals.trim() !== "");
+
+    const hasAge =
+      user.age !== undefined &&
+      user.age !== null &&
+      user.age !== "";
+
+    const hasGender =
+      typeof user.gender === "string" &&
+      user.gender.trim() !== "";
+
+    const hasLocation =
+      typeof user.location === "string" &&
+      user.location.trim() !== "";
+
+    const hasWorkoutType =
+      typeof user.workoutType === "string" &&
+      user.workoutType.trim() !== "";
+
+    const hasPlan =
+      typeof user.plan === "string" &&
+      user.plan.trim() !== "";
 
     const profileComplete =
       user.onboardingCompleted === true ||
       (
-        user.age !== undefined &&
-        user.age !== null &&
-        user.gender &&
-        user.location &&
-        user.workoutType &&
-        Array.isArray(user.goals) &&
-        user.goals.length > 0 &&
-        user.plan
+        hasAge &&
+        hasGender &&
+        hasLocation &&
+        hasWorkoutType &&
+        hasGoals &&
+        hasPlan
       );
 
+    // ==================================================
+    // IMPORTANT:
+    // If an old user already completed onboarding,
+    // permanently mark it as completed.
+    // ==================================================
+
+    if (
+      profileComplete &&
+      user.onboardingCompleted !== true
+    ) {
+      user.onboardingCompleted = true;
+    }
+
+    await user.save();
+
     console.log(
-      "📋 Profile complete:",
+      "📋 Onboarding completed:",
       profileComplete
     );
 
     // ==================================================
-    // SEND USER DATA
+    // RETURN USER
     // ==================================================
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Google login successful",
 
-      // TRUE  = first/incomplete user
-      // FALSE = existing completed user
+      // true  = show onboarding
+      // false = go directly to home
       isNewUser: !profileComplete,
 
       user: {
@@ -130,8 +185,6 @@ router.post("/google-login", async (req, res) => {
         goals: user.goals,
         plan: user.plan,
         picture: user.picture || picture || null,
-
-        // Send onboarding status to frontend
         onboardingCompleted: profileComplete
       }
     });
@@ -580,6 +633,8 @@ router.put("/onboarding/:id", async (req, res) => {
         workoutType,
         goals,
         plan,
+
+        // ⭐ IMPORTANT
         onboardingCompleted: true
       },
       {

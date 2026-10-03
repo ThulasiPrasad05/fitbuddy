@@ -29,7 +29,6 @@ const userSchema = new mongoose.Schema({
     default: false
   },
 
-  // ❤️ Store liked users
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
