@@ -52,7 +52,15 @@ router.post("/google-login", async (req, res) => {
       });
     }
 
+    // ==================================================
+    // FIND USER
+    // ==================================================
+
     let user = await User.findOne({ email });
+
+    // ==================================================
+    // CREATE NEW GOOGLE USER
+    // ==================================================
 
     if (!user) {
       user = await User.create({
@@ -62,7 +70,13 @@ router.post("/google-login", async (req, res) => {
       });
 
       console.log("🆕 New Google user created:", email);
+
     } else {
+
+      // ==================================================
+      // EXISTING GOOGLE USER
+      // ==================================================
+
       console.log("👤 Existing Google user:", email);
 
       // Update Google profile picture if available
@@ -72,8 +86,39 @@ router.post("/google-login", async (req, res) => {
       }
     }
 
+    // ==================================================
+    // CHECK ONBOARDING STATUS
+    // ==================================================
+
+    const profileComplete =
+      user.onboardingCompleted === true ||
+      (
+        user.age !== undefined &&
+        user.age !== null &&
+        user.gender &&
+        user.location &&
+        user.workoutType &&
+        Array.isArray(user.goals) &&
+        user.goals.length > 0 &&
+        user.plan
+      );
+
+    console.log(
+      "📋 Profile complete:",
+      profileComplete
+    );
+
+    // ==================================================
+    // SEND USER DATA
+    // ==================================================
+
     res.status(200).json({
       message: "Google login successful",
+
+      // TRUE  = first/incomplete user
+      // FALSE = existing completed user
+      isNewUser: !profileComplete,
+
       user: {
         _id: user._id,
         name: user.name,
@@ -84,7 +129,10 @@ router.post("/google-login", async (req, res) => {
         location: user.location,
         goals: user.goals,
         plan: user.plan,
-        picture: user.picture || picture || null
+        picture: user.picture || picture || null,
+
+        // Send onboarding status to frontend
+        onboardingCompleted: profileComplete
       }
     });
 
@@ -171,7 +219,6 @@ router.post("/like", async (req, res) => {
 
     if (alreadyLiked) {
 
-      // Check whether they are already matched
       const existingMatch = await Match.findOne({
         users: {
           $all: [fromUserId, toUserId]
@@ -201,19 +248,16 @@ router.post("/like", async (req, res) => {
 
     if (alreadyLikedBack) {
 
-      // Add the current user's like
       fromUser.likes.push(toUserId);
 
       await fromUser.save();
 
-      // Check whether match already exists
       const existingMatch = await Match.findOne({
         users: {
           $all: [fromUserId, toUserId]
         }
       });
 
-      // Create match if it doesn't exist
       if (!existingMatch) {
         await Match.create({
           users: [fromUserId, toUserId]
@@ -273,14 +317,12 @@ router.post("/unlike", async (req, res) => {
       });
     }
 
-    // Remove the like
     fromUser.likes = (fromUser.likes || []).filter(
       id => id.toString() !== toUserId.toString()
     );
 
     await fromUser.save();
 
-    // Remove existing match between these two users
     await Match.deleteOne({
       users: {
         $all: [fromUserId, toUserId]
@@ -537,7 +579,8 @@ router.put("/onboarding/:id", async (req, res) => {
         location,
         workoutType,
         goals,
-        plan
+        plan,
+        onboardingCompleted: true
       },
       {
         new: true

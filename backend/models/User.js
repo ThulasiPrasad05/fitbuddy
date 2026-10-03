@@ -1,70 +1,41 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
+  name: String,
 
-  // 👤 Basic information
+  email: String,
 
-  name: {
-    type: String,
-    required: true
-  },
+  password: String,
 
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
+  picture: String,
 
-  password: {
-    type: String
-  },
+  age: Number,
 
-  picture: {
-    type: String
-  },
+  gender: String,
 
+  location: String,
 
-  // 🏋️ Fitness information
+  workoutType: String,
 
-  workoutType: {
-    type: String
-  },
-
-  age: {
-    type: Number
-  },
-
-  gender: {
-    type: String
-  },
-
-  location: {
-    type: String
-  },
-
-  // Multiple fitness goals
   goals: {
     type: [String],
     default: []
   },
 
-  plan: {
-    type: String
+  plan: String,
+
+  onboardingCompleted: {
+    type: Boolean,
+    default: false
   },
 
-
-  // ❤️ Users this person liked
-
+  // ❤️ Store liked users
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
     }
   ]
-
-}, {
-  timestamps: true
 });
-
 
 module.exports = mongoose.model("User", userSchema);
